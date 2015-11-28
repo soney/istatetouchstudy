@@ -1,0 +1,37 @@
+$brown: #382513;
+$cream: #D8CAA8;
+$grey: #363942;
+$light_green: #5C832F;
+$dark_green: #284907;
+@mixin noselect() {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+body {
+	background-color: $brown;
+	color: white;
+	font-size: 2em;
+	font-weight: 200;
+
+	.option {
+		border-radius: 3px;
+		border: 1px solid $grey;
+		cursor: pointer;
+		@include noselect;
+		padding: 20px;
+		text-align: center;
+		vertical-align: middle;
+		&:hover {
+			border: 1px solid $dark_green;
+		}
+		&.selected {
+			background-color: $dark_green;
+			border: 1px solid $light_green;
+		}
+	}
+}
