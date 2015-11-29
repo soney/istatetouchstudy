@@ -4,7 +4,7 @@ function getOptions() {
 
 $.widget('iss.mcquestion', {
 	options: {
-
+		
 	},
 	_create: function() {
 		this.questionContainer = $('<div />').addClass('question row')
@@ -17,6 +17,19 @@ $.widget('iss.mcquestion', {
 		this.optionsContainer = $('<div />').addClass('options row')
 											.appendTo(this.element);
 
+		this.submitContainer = $('<div />').addClass('row')
+											.appendTo(this.element);
+
+		this.submitButton = $('<button />').attr({
+				type: 'button'
+			}).addClass('btn btn-default btn-lg disabled')
+			.appendTo(this.submitContainer)
+			.text('Next')
+			.on('click', $.proxy(this._onSubmit, this))
+			.append($('<span />').addClass('glyphicon glyphicon-chevron-right'));
+
+		$(window).on('keypress.submitanswer', $.proxy(this._onKeyPress, this));
+
 
 		this._updateOptions();
 	},
@@ -25,10 +38,22 @@ $.widget('iss.mcquestion', {
 
 	},
 
-	_updateOptions: function() {
-		var options = getOptions();
+	_onKeyPress: function(event) {
+		var which = event.which;
+		if(which >= 49 && which <= 52) {
+			var selectionIndex = which - 49;
+			this._optionSelected({
+				target: this.optionsContainer.children().eq(selectionIndex)
+			});
+		} else if(which === 13) {
+			this._onSubmit();
+		}
+	},
 
-		_.each(options, function(option) {
+	_updateOptions: function() {
+		this.options = getOptions();
+
+		_.each(this.options, function(option) {
 			var optionDisplay = $('<div />').addClass('col-md-3 option')
 											.appendTo(this.optionsContainer)
 											.text(option);
@@ -40,8 +65,20 @@ $.widget('iss.mcquestion', {
 	},
 
 	_optionSelected: function(event) {
-		var target = event.target;
+		var target = $(event.target);
+
+		this.selectedIndex = target.index();
+		this.selectedOption = this.options[this.selectedIndex];
+
 		$('.option.selected', this.optionsContainer).removeClass('selected');
-		$(target).addClass('selected');
+		target.addClass('selected');
+
+		this.submitButton.removeClass('disabled');
+	},
+
+	_onSubmit: function() {
+		if(this.selectedOption) {
+			console.log(this.selectedOption);
+		}
 	}
 });
