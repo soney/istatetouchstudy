@@ -19,6 +19,8 @@ body {
 	font-weight: 200;
 
 	.option {
+        margin-top: 30px;
+        margin-bottom: 20px;
 		border-radius: 3px;
 		border: 1px solid $grey;
 		cursor: pointer;
@@ -32,6 +34,21 @@ body {
 		&.selected {
 			background-color: $dark_green;
 			border: 1px solid $light_green;
+
+            .number {
+                color: $light_green;
+            }
 		}
+
+        .number {
+            position: absolute;
+            left: 15px;
+            top: -25px;
+            color: $cream;
+        }
 	}
+
+    .next {
+        text-align: right;
+    }
 }

@@ -4,6 +4,8 @@ body {
   font-size: 2em;
   font-weight: 200; }
   body .option {
+    margin-top: 30px;
+    margin-bottom: 20px;
     border-radius: 3px;
     border: 1px solid #363942;
     cursor: pointer;
@@ -21,3 +23,12 @@ body {
     body .option.selected {
       background-color: #284907;
       border: 1px solid #5C832F; }
+      body .option.selected .number {
+        color: #5C832F; }
+    body .option .number {
+      position: absolute;
+      left: 15px;
+      top: -25px;
+      color: #D8CAA8; }
+  body .next {
+    text-align: right; }
