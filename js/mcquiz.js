@@ -1,6 +1,6 @@
 $.widget('iss.mcquiz', {
 	options: {
-		numQuestions: 20,
+		numQuestions: 16,
 		currentQuestion: 1
 	},
 	_create: function() {
@@ -36,6 +36,7 @@ $.widget('iss.mcquiz', {
 		var focusTime = event.focusTime;
 
 		this.option('currentQuestion', this.option('currentQuestion')+1);
+		console.log(focusTime);
 	},
 	_setOption: function(key, value) {
 		this._super(key, value);

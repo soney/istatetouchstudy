@@ -5,7 +5,25 @@ function getOptions() {
 $.widget('iss.mcquestion', {
 	options: {
 		getQuestion: function() {
-			return $('<div />').text('This is the question');
+			return new Promise(function(resolve, reject) {
+				$.ajax({
+					url: 'js/behaviors/tap.js',
+					dataType: 'text'
+				}).done(function(val) {
+					console.log(val);
+					resolve(val);
+				}).error(function(err) {
+					console.error(err);
+				});
+			}).then(function(codeStr) {
+				codeStr = codeStr.substring(codeStr.indexOf('\n')+1, codeStr.lastIndexOf('\n')-1);
+				codeStr = codeStr.replace(/^\t/gm, '');
+				var preElem = $('<pre />');
+				var codeElem = $('<code />').appendTo(preElem)
+											.text(codeStr);
+				hljs.highlightBlock(codeElem[0]);
+				return preElem;
+			});
 		},
 		getResponseOptions: function() {
 			function getOption(num, isCorrect) {
@@ -29,8 +47,12 @@ $.widget('iss.mcquestion', {
 									.appendTo(this.element);
 
 		this.question = $('<div />').addClass('col-sm-12')
-									.appendTo(this.questionContainer)
-									.append(this.option('getQuestion')());
+									.appendTo(this.questionContainer);
+
+		Promise.method(this.option('getQuestion'))().then(_.bind(function(elem) {
+			this.question.append(elem);
+		}, this));
+
 
 		this.optionsContainer = $('<div />').addClass('options row')
 											.appendTo(this.element);
@@ -54,8 +76,10 @@ $.widget('iss.mcquestion', {
 			var optionDisplay = $('<div />').addClass('col-md-3 option')
 											.appendTo(this.optionsContainer)
 											.append($('<span />').text(index+1)
-																.addClass('number'))
-											.append(option.getElement());
+																.addClass('number'));
+			Promise.method(option.getElement)().then(function(elem) {
+				optionDisplay.append(elem);
+			});
 		}, this);
 
 		$('.option', this.optionsContainer).on('click.optionSelected', $.proxy(this._optionSelected, this));

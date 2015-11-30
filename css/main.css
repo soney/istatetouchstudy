@@ -30,5 +30,13 @@ body {
       left: 15px;
       top: -25px;
       color: #D8CAA8; }
+  body pre {
+    -moz-tab-size: 4;
+    /* Code for Firefox */
+    -o-tab-size: 4;
+    /* Code for Opera 10.6-12.1 */
+    tab-size: 4;
+    background-color: #232323;
+    border: none; }
   body .next {
     text-align: right; }
