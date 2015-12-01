@@ -27,10 +27,11 @@ $.widget('iss.mcquiz', {
 
 
 		var loadedValue = this._load();
-		if(loadedValue) {
-			console.log(loadedValue);
+		if(loadedValue && loadedValue.currentQuestion <= loadedValue.numQuestions) {
 			this._questions = loadedValue.questions;
 			this._answers = loadedValue.answers;
+			this._uid = loadedValue.uid;
+			this._started = loadedValue.started;
 			this.option({
 				numQuestions: loadedValue.numQuestions,
 				currentQuestion: loadedValue.currentQuestion
@@ -43,6 +44,8 @@ $.widget('iss.mcquiz', {
 					answered: false
 				};
 			});
+			this._uid = guid();
+			this._started = (new Date()).getTime();
 		}
 
 		this._updateProgressBar();
@@ -116,13 +119,11 @@ $.widget('iss.mcquiz', {
 	},
 
 	_onBeforeUnload: function() {
-		debugger;
 		this._save();
 	},
 
 	_save: function() {
 		var stringifiedValue = JSON.stringify(this._serialize());
-		console.log(stringifiedValue);
 		localStorage.setItem(SAVEKEY, stringifiedValue);
 	},
 
@@ -137,6 +138,7 @@ $.widget('iss.mcquiz', {
 			});
 			val.answers = _.map(val.answers, function(serializedAnswer, index) {
 				return _.extend(serializedAnswer, {
+					question: val.questions[index],
 					selectedOption: val.questions[index].responseOptions[serializedAnswer.selectedIndex]
 				});
 			});
@@ -146,11 +148,12 @@ $.widget('iss.mcquiz', {
 	},
 
 	_removeSaved: function() {
-		localStorage.clearItem(SAVEKEY);
+		localStorage.removeItem(SAVEKEY);
 	},
 
 	_serialize: function() {
 		return {
+			uid: this._uid,
 			numQuestions: this.option('numQuestions'),
 			currentQuestion: this.option('currentQuestion'),
 			questions: _.map(this._questions, function(q) {
@@ -162,6 +165,8 @@ $.widget('iss.mcquiz', {
 					selectedOption: a.selectedOption ? a.selectedOption.serialize() : false
 				});
 			}, this),
+			started: this._started,
+			serialized: (new Date()).getTime()
 		};
 	},
 
@@ -228,7 +233,21 @@ $.widget('iss.mcquiz', {
 	_transmitResults: function() {
 		var results = this._serialize();
 
+		var myFirebaseRef = new Firebase('https://scorching-fire-1153.firebaseio.com/');
+		myFirebaseRef.child(results.uid).set(results);
+
 		this._removeSaved();
 	}
 
 });
+
+function guid() {
+	function s4() {
+		return Math.floor((1 + Math.random()) * 0x10000)
+			.toString(16)
+			.substring(1);
+	}
+
+	return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+			s4() + '-' + s4() + s4() + s4();
+}
