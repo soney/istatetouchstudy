@@ -4,42 +4,8 @@ function getOptions() {
 
 $.widget('iss.mcquestion', {
 	options: {
-		getQuestion: function() {
-			return new Promise(function(resolve, reject) {
-				$.ajax({
-					url: 'js/behaviors/tap.js',
-					dataType: 'text'
-				}).done(function(val) {
-					console.log(val);
-					resolve(val);
-				}).error(function(err) {
-					console.error(err);
-				});
-			}).then(function(codeStr) {
-				codeStr = codeStr.substring(codeStr.indexOf('\n')+1, codeStr.lastIndexOf('\n')-1);
-				codeStr = codeStr.replace(/^\t/gm, '');
-				var preElem = $('<pre />');
-				var codeElem = $('<code />').appendTo(preElem)
-											.text(codeStr);
-				hljs.highlightBlock(codeElem[0]);
-				return preElem;
-			});
-		},
-		getResponseOptions: function() {
-			function getOption(num, isCorrect) {
-				return {
-					serialize: function() {
-						return num;
-					},
-					getElement: function() {
-						return $('<div />').text(num);
-					},
-					correct: isCorrect
-				}
-			}
-
-			return[getOption('A', false), getOption('B', true), getOption('C', false), getOption('D', false)];
-		}
+		question: false,
+		responseOptions: false
 	},
 
 	_create: function() {
@@ -47,12 +13,8 @@ $.widget('iss.mcquestion', {
 									.appendTo(this.element);
 
 		this.question = $('<div />').addClass('col-sm-12')
-									.appendTo(this.questionContainer);
-
-		Promise.method(this.option('getQuestion'))().then(_.bind(function(elem) {
-			this.question.append(elem);
-		}, this));
-
+									.appendTo(this.questionContainer)
+									.append(this.option('question'));
 
 		this.optionsContainer = $('<div />').addClass('options row')
 											.appendTo(this.element);
@@ -68,18 +30,12 @@ $.widget('iss.mcquestion', {
 			.on('click', $.proxy(this._onSubmit, this))
 			.append($('<span />').addClass('glyphicon glyphicon-chevron-right'));
 
-
-
-		this.options = this.option('getResponseOptions')();
-
-		_.each(this.options, function(option, index) {
+		_.each(this.option('responseOptions'), function(option, index) {
 			var optionDisplay = $('<div />').addClass('col-md-3 option')
 											.appendTo(this.optionsContainer)
 											.append($('<span />').text(index+1)
-																.addClass('number'));
-			Promise.method(option.getElement)().then(function(elem) {
-				optionDisplay.append(elem);
-			});
+																.addClass('number'))
+											.append(option);
 		}, this);
 
 		$('.option', this.optionsContainer).on('click.optionSelected', $.proxy(this._optionSelected, this));
@@ -111,21 +67,22 @@ $.widget('iss.mcquestion', {
 
 	_onKeyPress: function(event) {
 		var which = event.which;
+		var responseOptions = this.option('responseOptions');
 		if(which >= 49 && which <= 52) {
 			this._setSelectedIndex(which - 49);
 		} else if(which === 13) { // enter
 			this._onSubmit();
 		} else if(which === 39) { // right
 			if(_.isNumber(this.selectedIndex)) {
-				this._setSelectedIndex((this.selectedIndex+1)%this.options.length);
+				this._setSelectedIndex((this.selectedIndex+1)%responseOptions.length);
 			} else {
 				this._setSelectedIndex(0);
 			}
 		} else if(which === 37) { // left
 			if(_.isNumber(this.selectedIndex)) {
-				this._setSelectedIndex(this.selectedIndex === 0 ? this.options.length-1 : this.selectedIndex-1);
+				this._setSelectedIndex(this.selectedIndex === 0 ? responseOptions.length-1 : this.selectedIndex-1);
 			} else {
-				this._setSelectedIndex(this.options.length-1);
+				this._setSelectedIndex(responseOptions.length-1);
 			}
 		}
 	},
@@ -149,12 +106,13 @@ $.widget('iss.mcquestion', {
 	},
 
 	_onSubmit: function() {
-		if(this.selectedOption) {
+		if(_.isNumber(this.selectedIndex)) {
 			this.timeInFocus += (new Date()).getTime() - this.lastFocus;
 
 			var event = $.Event('answered');
-			event.selectedOption = this.selectedOption.serialize();
-			event.correct = this.selectedOption.correct;
+			//event.selectedOption = this.selectedOption.serialize();
+			//event.correct = this.selectedOption.correct;
+			event.selectedIndex = this.selectedIndex;
 			event.totalTime = (new Date()).getTime() - this.startTime;
 			event.focusTime = this.timeInFocus;
 
