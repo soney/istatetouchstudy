@@ -1,7 +1,75 @@
 var SAVEKEY = 'istatetouchstudy';
 
+var behaviors = ['tap', 'tap2', 'tap3', 'tap4'];
+
+function getQuestion(behaviorName) {
+	var codePromise = new Promise(function(resolve, reject) {
+					$.ajax({
+						url: 'js/behaviors/' + behaviorName + '.js'
+					}).done(function(val) {
+						resolve(val);
+					}).error(function(err) {
+						console.error(err);
+					});
+				});
+	return {
+		serialize: function() {
+			return {
+				behaviorName: behaviorName
+			};
+		},
+		getElement: function() {
+			return Promise.join(codePromise, function(codeStr) {
+				codeStr = codeStr.substring(codeStr.indexOf('\n')+1, codeStr.lastIndexOf('\n')-1);
+				codeStr = codeStr.replace(/^\t/gm, '');
+				var preElem = $('<pre />');
+				var codeElem = $('<code />').appendTo(preElem)
+											.text(codeStr);
+				hljs.highlightBlock(codeElem[0]);
+				return preElem;
+			});
+		}
+	}
+}
+
+function getOption(behaviorName, isCorrect) {
+	 var behaviorPromise = new Promise(function(resolve, reject) {
+			$.ajax({
+				url: 'js/behaviors/' + behaviorName + '.js'
+			}).done(function(val) {
+				resolve(val);
+			}).error(function(err) {
+				console.error(err);
+			});
+		}),
+		recordingPromise = new Promise(function(resolve, reject) {
+			$.ajax({
+				url: 'js/recordings/' + behaviorName + '.recording.json'
+			}).done(function(val) {
+				resolve(val);
+			}).error(function(err) {
+				console.error(err);
+			});
+		});
+
+	return {
+		serialize: function() {
+			return {
+				correct: this.correct,
+				behaviorName: behaviorName
+			};
+		},
+		getElement: function() {
+			return Promise.join(behaviorPromise, recordingPromise, function(behavior, recording) {
+				return $('<div />').text(behavior);
+			});
+		},
+		correct: isCorrect
+	}
+}
 $.widget('iss.mcquiz', {
 	options: {
+		numResponseOptions: 4,
 		numQuestions: 16,
 		currentQuestion: 1
 	},
@@ -37,7 +105,7 @@ $.widget('iss.mcquiz', {
 				currentQuestion: loadedValue.currentQuestion
 			});
 		} else {
-			this._questions = this._generateQuestions(this.option('numQuestions'));
+			this._questions = this._generateQuestions();
 			this._answers = _.map(this._questions, function(q) {
 				return {
 					question: q,
@@ -58,63 +126,26 @@ $.widget('iss.mcquiz', {
 
 	},
 
-	_generateQuestions: function(numQuestions) {
-		function getQuestion() {
+	_generateQuestions: function() {
+		var numResponseOptions = this.option('numResponseOptions'),
+			behaviorList = shuffleUntil(behaviors, this.option('numQuestions'));
+
+		var questions = _.map(behaviorList, function(behaviorName) {
+			var question = getQuestion(behaviorName),
+				correctResponse = getOption(behaviorName, true),
+				otherPossibleBehaviors = _.without(behaviors, behaviorName),
+				responseOptions = _.map(shuffleUntil(otherPossibleBehaviors, numResponseOptions), function(optionName) {
+					return getOption(optionName, false);
+				});
+
+			responseOptions[Math.floor(Math.random()*responseOptions.length)] = correctResponse;
+
 			return {
-				serialize: function() {
-					return ''
-				},
-				getElement: function() {
-					return new Promise(function(resolve, reject) {
-						$.ajax({
-							url: 'js/behaviors/tap.js',
-							dataType: 'text'
-						}).done(function(val) {
-							resolve(val);
-						}).error(function(err) {
-							console.error(err);
-						});
-					}).then(function(codeStr) {
-						codeStr = codeStr.substring(codeStr.indexOf('\n')+1, codeStr.lastIndexOf('\n')-1);
-						codeStr = codeStr.replace(/^\t/gm, '');
-						var preElem = $('<pre />');
-						var codeElem = $('<code />').appendTo(preElem)
-													.text(codeStr);
-						hljs.highlightBlock(codeElem[0]);
-						return preElem;
-					});
-				}
+				question: question,
+				responseOptions: responseOptions
 			}
-		}
-		function getOption(num, isCorrect) {
-			return {
-				serialize: function() {
-					return {
-						correct: this.correct,
-						id: num
-					};
-				},
-				getElement: function() {
-					return $('<div />').text(num);
-				},
-				correct: isCorrect
-			}
-		}
-		var questions = [];
-		for(var i = 0; i<numQuestions; i++) {
-			questions.push({
-				question: getQuestion(),
-				responseOptions: [getOption('A', false), getOption('B', true), getOption('C', false), getOption('D', false)],
-				serialize: function() {
-					return {
-						question: this.question.serialize(),
-						responseOptions: _.map(this.responseOptions, function(response) {
-							return response.serialize();
-						})
-					}
-				}
-			})
-		}
+		});
+
 		return questions;
 	},
 
@@ -132,14 +163,21 @@ $.widget('iss.mcquiz', {
 
 		if(stringifiedValue) {
 			var val = JSON.parse(stringifiedValue);
-			var q = this._generateQuestions(val.numQuestions);
 			val.questions = _.map(val.questions, function(serializedQuestion, index) {
-				return q[index];
+				var question = getQuestion(serializedQuestion.behaviorName),
+					responseOptions = _.map(serializedQuestion.responseOptions, function(responseOption) {
+						return getOption(responseOption.behaviorName, responseOption.correct);
+					});
+				return {
+					question: question,
+					responseOptions: responseOptions
+				}
 			});
 			val.answers = _.map(val.answers, function(serializedAnswer, index) {
+				var question = val.questions[index];
 				return _.extend(serializedAnswer, {
-					question: val.questions[index],
-					selectedOption: val.questions[index].responseOptions[serializedAnswer.selectedIndex]
+					question: question,
+					selectedOption: question.responseOptions[serializedAnswer.selectedIndex]
 				});
 			});
 			return val;
@@ -250,4 +288,33 @@ function guid() {
 
 	return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
 			s4() + '-' + s4() + s4() + s4();
+}
+
+function shuffle(array) {
+	var currentIndex = array.length, temporaryValue, randomIndex ;
+
+	// While there remain elements to shuffle...
+	while (0 !== currentIndex) {
+		// Pick a remaining element...
+		randomIndex = Math.floor(Math.random() * currentIndex);
+		currentIndex -= 1;
+
+		// And swap it with the current element.
+		temporaryValue = array[currentIndex];
+		array[currentIndex] = array[randomIndex];
+		array[randomIndex] = temporaryValue;
+	}
+
+	return array;
+}
+
+function shuffleUntil(options, length) {
+	if(options.length === 0) { throw new Error('No options'); }
+
+	var rv = [];
+	while(rv.length < length) {
+		rv.push.apply(rv, shuffle(options));
+	}
+	rv = _.first(rv, length);
+	return rv;
 }
