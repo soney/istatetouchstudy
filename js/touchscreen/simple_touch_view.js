@@ -29,7 +29,7 @@ $.widget("interstate.screen_touches", {
 			defaultFill = this.option("defaultFill"),
 			defaultStroke = this.option("defaultStroke");
 
-		$(window).on('touchstart.simple_touch_view', _.bind(function(jq_event) {
+		this.element.on('touchstart.simple_touch_view', _.bind(function(jq_event) {
 				var event = jq_event.originalEvent,
 					touchPathStr = false;
 

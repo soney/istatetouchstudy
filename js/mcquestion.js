@@ -1,7 +1,3 @@
-function getOptions() {
-
-}
-
 $.widget('iss.mcquestion', {
 	options: {
 		question: false,

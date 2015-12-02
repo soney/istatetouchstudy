@@ -61,7 +61,10 @@ function getOption(behaviorName, isCorrect) {
 		},
 		getElement: function() {
 			return Promise.join(behaviorPromise, recordingPromise, function(behavior, recording) {
-				return $('<div />').text(behavior);
+				return $('<div />').touchscreenOption({
+					name: behaviorName,
+					recording: recording
+				});
 			});
 		},
 		correct: isCorrect
@@ -150,7 +153,7 @@ $.widget('iss.mcquiz', {
 	},
 
 	_onBeforeUnload: function() {
-		this._save();
+		//this._save();
 	},
 
 	_save: function() {

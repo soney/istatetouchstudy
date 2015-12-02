@@ -23,6 +23,7 @@ $.widget("interstate.svg_path", {
 			attributes = _.extend({}, this.option("defaultPathAttributes"), pathAttributes),
 			paper_path = paper.path("M0,0").attr(attributes);
 
+/*
 		var draw_fn = cjs.liven(function() {
 			var pathStr = ist.convertObjectToPath(path);
 			if(!pathStr) {
@@ -36,6 +37,7 @@ $.widget("interstate.svg_path", {
 				paper_path.remove();
 			}
 		});
+		*/
 
 		return draw_fn;
 	},
