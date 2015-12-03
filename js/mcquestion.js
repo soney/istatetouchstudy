@@ -14,6 +14,15 @@ $.widget('iss.mcquestion', {
 
 		this.optionsContainer = $('<div />').addClass('options row')
 											.appendTo(this.element);
+		this.notesContainer = $('<div />')	.addClass('notes row')
+											.appendTo(this.element);
+		this.notes = $('<textarea />')	.appendTo(this.notesContainer)
+										.attr({
+											placeholder: 'Notes'
+										})
+										.css({
+											width: '100%'
+										});
 
 		this.submitContainer = $('<div />').addClass('next row')
 											.appendTo(this.element);
@@ -51,6 +60,7 @@ $.widget('iss.mcquestion', {
 		this.questionContainer.remove();
 		this.optionsContainer.remove();
 		this.submitContainer.remove();
+		this.notesContainer.remove();
 	},
 
 	_onWindowFocus: function() {
@@ -111,6 +121,7 @@ $.widget('iss.mcquestion', {
 			event.selectedIndex = this.selectedIndex;
 			event.totalTime = (new Date()).getTime() - this.startTime;
 			event.focusTime = this.timeInFocus;
+			event.notes = this.notes.val();
 
 			this.element.trigger(event);
 		}

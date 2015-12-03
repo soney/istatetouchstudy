@@ -30,6 +30,10 @@ body {
       left: 15px;
       top: -25px;
       color: #D8CAA8; }
+  body .notes {
+    color: black; }
+    body .notes textarea {
+      padding: 10px; }
   body pre {
     -moz-tab-size: 4;
     /* Code for Firefox */

@@ -2,7 +2,26 @@ var SAVEKEY = 'istatetouchstudy';
 
 var behaviors = ['tap', 'tap2', 'tap3', 'tap4'];
 
-function getQuestion(behaviorName) {
+function loadQuestion(serializedQuestion) {
+	var question = getQuestion(serializedQuestion.behaviorName, false);
+	var rv = _.extend({},
+		serializedQuestion,
+		question, {
+			responseOptions: _.map(serializedQuestion.responseOptions, function(ro) {
+				return loadOption(ro);
+			})
+		});
+	if(rv.selectedOption) {
+		rv.selectedOption = loadOption(rv.selectedOption);
+	}
+	return rv;
+}
+
+function loadOption(serializedOption) {
+	return getOption(serializedOption.behaviorName, serializedOption.correct);
+}
+
+function getQuestion(behaviorName, numResponseOptions) {
 	var codePromise = new Promise(function(resolve, reject) {
 					$.ajax({
 						url: 'js/behaviors/' + behaviorName + '.js'
@@ -11,12 +30,36 @@ function getQuestion(behaviorName) {
 					}).error(function(err) {
 						console.error(err);
 					});
-				});
+				}),
+		responseOptions;
+
+	if(numResponseOptions && numResponseOptions > 0) {
+		var correctResponse = getOption(behaviorName, true),
+			otherPossibleBehaviors = _.without(behaviors, behaviorName),
+			responseOptions = _.map(shuffleUntil(otherPossibleBehaviors, numResponseOptions), function(optionName) {
+				return getOption(optionName, false);
+			});
+
+		responseOptions[Math.floor(Math.random()*responseOptions.length)] = correctResponse;
+	} else {
+		responseOptions = false;
+	}
+
 	return {
 		serialize: function() {
-			return {
-				behaviorName: behaviorName
-			};
+			var rv = _.extend({}, this, {
+				behaviorName: behaviorName,
+				responseOptions: _.map(this.responseOptions, function(ro) {
+					return ro.serialize();
+				}),
+			});
+			if(rv.selectedOption) {
+				rv.selectedOption = rv.selectedOption.serialize();
+			}
+
+			delete rv.getElement;
+
+			return rv;
 		},
 		getElement: function() {
 			return Promise.join(codePromise, function(codeStr) {
@@ -28,8 +71,9 @@ function getQuestion(behaviorName) {
 				hljs.highlightBlock(codeElem[0]);
 				return preElem;
 			});
-		}
-	}
+		},
+		responseOptions: responseOptions
+	};
 }
 
 function getOption(behaviorName, isCorrect) {
@@ -73,7 +117,7 @@ function getOption(behaviorName, isCorrect) {
 $.widget('iss.mcquiz', {
 	options: {
 		numResponseOptions: 4,
-		numQuestions: 16,
+		numQuestions: 2,
 		currentQuestion: 1
 	},
 	_create: function() {
@@ -98,9 +142,9 @@ $.widget('iss.mcquiz', {
 
 
 		var loadedValue = this._load();
+		console.log(loadedValue);
 		if(loadedValue && loadedValue.currentQuestion <= loadedValue.numQuestions) {
 			this._questions = loadedValue.questions;
-			this._answers = loadedValue.answers;
 			this._uid = loadedValue.uid;
 			this._started = loadedValue.started;
 			this.option({
@@ -109,12 +153,11 @@ $.widget('iss.mcquiz', {
 			});
 		} else {
 			this._questions = this._generateQuestions();
-			this._answers = _.map(this._questions, function(q) {
-				return {
-					question: q,
+			_.map(this._questions, function(q) {
+				_.extend(q, {
 					answered: false
-				};
-			});
+				})
+			})
 			this._uid = guid();
 			this._started = (new Date()).getTime();
 		}
@@ -134,26 +177,14 @@ $.widget('iss.mcquiz', {
 			behaviorList = shuffleUntil(behaviors, this.option('numQuestions'));
 
 		var questions = _.map(behaviorList, function(behaviorName) {
-			var question = getQuestion(behaviorName),
-				correctResponse = getOption(behaviorName, true),
-				otherPossibleBehaviors = _.without(behaviors, behaviorName),
-				responseOptions = _.map(shuffleUntil(otherPossibleBehaviors, numResponseOptions), function(optionName) {
-					return getOption(optionName, false);
-				});
-
-			responseOptions[Math.floor(Math.random()*responseOptions.length)] = correctResponse;
-
-			return {
-				question: question,
-				responseOptions: responseOptions
-			}
+			return getQuestion(behaviorName, numResponseOptions);
 		});
 
 		return questions;
 	},
 
 	_onBeforeUnload: function() {
-		//this._save();
+		this._save();
 	},
 
 	_save: function() {
@@ -165,17 +196,35 @@ $.widget('iss.mcquiz', {
 		var stringifiedValue = localStorage.getItem(SAVEKEY);
 
 		if(stringifiedValue) {
-			var val = JSON.parse(stringifiedValue);
-			val.questions = _.map(val.questions, function(serializedQuestion, index) {
+			var serializedQuestions = JSON.parse(stringifiedValue);
+			var questions = _.map(serializedQuestions.questions, function(serializedQuestion) {
+				return loadQuestion(serializedQuestion);
+			});
+			return _.extend({}, serializedQuestions, {
+				questions: questions
+			});
+			//val.questions = _.map(val.questions, function(serializedQuestion, index) {
+				//return loadQuestion(serializedQuestion);
+				/*
 				var question = getQuestion(serializedQuestion.behaviorName),
 					responseOptions = _.map(serializedQuestion.responseOptions, function(responseOption) {
 						return getOption(responseOption.behaviorName, responseOption.correct);
 					});
 				return {
 					question: question,
-					responseOptions: responseOptions
+					responseOptions: responseOptions,
+					serialize: function() {
+						return {
+							question: question.serialize(),
+							responseOptions: _.map(responseOptions, function(ro) {
+								return ro.serialize()
+							})
+						};
+					}
 				}
-			});
+				*/
+			//});
+			/*
 			val.answers = _.map(val.answers, function(serializedAnswer, index) {
 				var question = val.questions[index];
 				return _.extend(serializedAnswer, {
@@ -184,6 +233,7 @@ $.widget('iss.mcquiz', {
 				});
 			});
 			return val;
+			*/
 		}
 		return false;
 	},
@@ -200,22 +250,25 @@ $.widget('iss.mcquiz', {
 			questions: _.map(this._questions, function(q) {
 				return q.serialize();
 			}),
+			/*
 			answers: _.map(this._answers, function(a) {
 				return _.extend({}, a, {
 					question: a.question.serialize(),
 					selectedOption: a.selectedOption ? a.selectedOption.serialize() : false
 				});
 			}, this),
+			*/
 			started: this._started,
 			serialized: (new Date()).getTime()
 		};
 	},
 
 	_onQuestionAnswered: function(event) {
-		_.extend(this._answers[this.option('currentQuestion')-1], {
+		_.extend(this._questions[this.option('currentQuestion')-1], {
 			answered: true,
 			totalTime: event.totalTime,
 			focusTime: event.focusTime,
+			notes: event.notes,
 			selectedOption: this._currentQuestion.responseOptions[event.selectedIndex],
 			selectedIndex: event.selectedIndex
 		});
@@ -225,7 +278,7 @@ $.widget('iss.mcquiz', {
 
 	_updateCurrentQuestion: function() {
 		var currentQuestion = this._questions[this.option('currentQuestion')-1];
-		var questionElement = Promise.resolve(currentQuestion.question.getElement());
+		var questionElement = Promise.resolve(currentQuestion.getElement());
 		var responseOptionElements = _.map(currentQuestion.responseOptions, function(responseOption) {
 			return Promise.resolve(responseOption.getElement());
 		});
@@ -274,8 +327,9 @@ $.widget('iss.mcquiz', {
 	_transmitResults: function() {
 		var results = this._serialize();
 
-		var myFirebaseRef = new Firebase('https://scorching-fire-1153.firebaseio.com/');
-		myFirebaseRef.child(results.uid).set(results);
+		//var myFirebaseRef = new Firebase('https://scorching-fire-1153.firebaseio.com/');
+		//myFirebaseRef.child(results.uid).set(results);
+		console.log(results);
 
 		this._removeSaved();
 	}
