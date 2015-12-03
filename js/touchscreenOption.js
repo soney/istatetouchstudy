@@ -31,14 +31,97 @@ $.widget('iss.touchscreenOption', {
 			paper: this.snap
 		});
 
-		this.replayContainer.on('touchstart.usertouch touchend.usertouch touchcancel.usertouch', $.proxy(this._onTouchEvent, this));
+		this.replayContainer.on('touchstart.usertouch touchend.usertouch touchcancel.usertouch touchmove.usertouch', $.proxy(this._onTouchEvent, this));
 
 		this._loopReplay();
 		this._realTouches = [];
+
+		this.behaviorFunc = getBehavior(this.option('name'));
+
+		this.$onTouchStart = _.bind(this._onTouchStart, this);
+		this.$onTouchMove = _.bind(this._onTouchMove, this);
+		this.$onTouchEnd = _.bind(this._onTouchEnd, this);
+		this.$onTouchCancel = _.bind(this._onTouchCancel, this);
+		this.$onGestureStart = _.bind(this._onGestureStart, this);
+		this.$onGestureFire = _.bind(this._onGestureFire, this);
+		this.$onGestureUpdate = _.bind(this._onGestureUpdate, this);
+		this.$onGestureStop = _.bind(this._onGestureStop, this);
+
+		this.behaviorFunc(this.$onTouchStart, this.$onTouchMove, this.$onTouchEnd,
+			this.$onTouchCancel, this.$onGestureFire, this.$onGestureStart,
+			this.$onGestureUpdate, this.$onGestureStop);
 	},
 
 	_destroy: function() {
+		this.replayContainer.off('touchstart.usertouch touchend.usertouch touchcancel.usertouch touchmove.usertouch');
 	},
+
+	_onTouchStart: function(func) {
+		$(this.element).on('touchstart', func);
+	},
+
+	_onTouchMove: function(func) {
+		$(this.element).on('touchmove', func);
+	},
+
+	_onTouchEnd: function(func) {
+		$(this.element).on('touchend', func);
+	},
+
+	_onTouchCancel: function(func) {
+		$(this.element).on('touchcancel', func);
+	},
+
+	_onGestureStart: function(val) {
+		var width = $(this.snap.node).width();
+
+		if(this.activatedText) {
+			this.activatedText.remove();
+			delete this.activatedText;
+		}
+
+		var activatedText = this.snap.text(width/2, 50, 'Activated').attr({
+			fill: '#FFF'
+		}).animate({
+			opacity: 0
+		}, 2000, mina.easeinout, _.bind(function() {
+			fireText.remove();
+		}, this));
+
+		this.activatedText = activatedText;
+	},
+	_onGestureFire: function(val) {
+		var width = $(this.snap.node).width();
+
+		var fireText = this.snap.text(width/2, 50, 'Fire!').attr({
+			fill: '#FFF'
+		}).animate({
+			opacity: 0
+		}, 2000, mina.easeinout, _.bind(function() {
+			fireText.remove();
+		}, this))
+	},
+	_onGestureUpdate: function(val) {
+		if(this.activatedText) {
+			this.activatedText.attr({
+				text: 'value: ' + val
+			});
+		}
+	},
+	_onGestureStop: function() {
+		if(this.activatedText) {
+			this.activatedText.remove();
+			delete this.activatedText;
+		}
+		var activatedText = this.activatedText;
+		activatedText.animate({
+			opacity: 0
+		}, 2000, mina.easeinout, function() {
+			activatedText.remove();
+		});
+	},
+
+
 
 	_onTouchEvent: function(event) {
 		var originalEvent = event.originalEvent;
@@ -47,6 +130,7 @@ $.widget('iss.touchscreenOption', {
 			this._realTouches = originalEvent.touches;
 			originalEvent.preventDefault();
 		}
+
 	},
 
 	_suspendReplay: function() {

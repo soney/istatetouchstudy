@@ -1,7 +1,8 @@
 registerBehavior('tap', function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, fire, begin, update, end) {
 
 	onTouchStart(function(event) {
-		console.log('touch started');
+		//console.log('touch started');
+		fire(1);
 	});
 
 });
