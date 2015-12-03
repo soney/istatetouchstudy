@@ -142,7 +142,6 @@ $.widget('iss.mcquiz', {
 
 
 		var loadedValue = this._load();
-		console.log(loadedValue);
 		if(loadedValue && loadedValue.currentQuestion <= loadedValue.numQuestions) {
 			this._questions = loadedValue.questions;
 			this._uid = loadedValue.uid;
@@ -329,7 +328,6 @@ $.widget('iss.mcquiz', {
 
 		//var myFirebaseRef = new Firebase('https://scorching-fire-1153.firebaseio.com/');
 		//myFirebaseRef.child(results.uid).set(results);
-		console.log(results);
 
 		this._removeSaved();
 	}

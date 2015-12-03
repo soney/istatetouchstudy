@@ -21,6 +21,16 @@ $.widget("interstate.screen_touches", {
 		this._removeFromPaper();
 		this.element.removeClass("simpleScreenTouches");
 	},
+	clear: function() {
+		_.each(this.touchDisplays, function(touchDisplay, id) {
+			_.each(touchDisplay, function(shape) {
+				if(shape && shape.remove) {
+					shape.remove();
+				}
+			});
+			delete this.touchDisplays[id];
+		}, this);
+	},
 	_addToPaper: function() {
 		var paper = this.option("paper"),
 			touchDisplays = this.touchDisplays = {},

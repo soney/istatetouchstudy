@@ -50,6 +50,13 @@ $.widget('iss.touchscreenOption', {
 		this.behaviorFunc(this.$onTouchStart, this.$onTouchMove, this.$onTouchEnd,
 			this.$onTouchCancel, this.$onGestureFire, this.$onGestureStart,
 			this.$onGestureUpdate, this.$onGestureStop);
+		this.element.hover(_.bind(function() {
+			$('.touchscreen_option').not(this.element).touchscreenOption('pause');
+		}, this), _.bind(function() {
+			$('.touchscreen_option').not(this.element).touchscreenOption('resume');
+		}, this));
+		this.element.addClass('touchscreen_option');
+		this._paused = false;
 	},
 
 	_destroy: function() {
@@ -127,16 +134,31 @@ $.widget('iss.touchscreenOption', {
 		var originalEvent = event.originalEvent;
 		if(!originalEvent.simulated) { // simulated events are just part of the replay
 			this._suspendReplay();
-			this._realTouches = originalEvent.touches;
+
+			if(originalEvent.touches.length > 0) {
+				this.pause();
+			} else {
+				this.resume();
+			}
 			originalEvent.preventDefault();
 		}
 
+	},
+
+	pause: function() {
+		this._suspendReplay();
+		this._paused = true;
+	},
+
+	resume: function() {
+		this._paused = false;
 	},
 
 	_suspendReplay: function() {
 		if(this._currentReplay) {
 			this._currentReplay.stop();
 			delete this._currentReplay;
+			this.replayContainer.touchscreen_layer('clear');
 		}
 	},
 
@@ -147,14 +169,14 @@ $.widget('iss.touchscreenOption', {
 			}
 		}, this)).then(_.bind(function() {
 			delete this._currentReplay;
-			return wait(this._isPaused() ? 3000  : 500);
+			return wait(this._isPaused() ? 1000  : 500);
 		}, this)).then(_.bind(function() {
 			this._loopReplay();
 		}, this));
 	},
 
 	_isPaused: function() {
-		return this._realTouches.length > 0;
+		return this._paused;
 	},
 
 	_replayTouches: function() {

@@ -107,5 +107,8 @@ $.widget("interstate.touchscreen_layer", {
 	},
 	removeTouchCluster: function(cluster) {
 		//this.element.touch_cluster("removeClusterFromPaper", cluster);
+	},
+	clear: function() {
+		this.element.screen_touches('clear');
 	}
 });
