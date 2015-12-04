@@ -146,8 +146,8 @@ $.widget('iss.touchscreenOption', {
 	},
 
 	pause: function() {
-		this._suspendReplay();
 		this._paused = true;
+		this._suspendReplay();
 	},
 
 	resume: function() {
@@ -180,15 +180,30 @@ $.widget('iss.touchscreenOption', {
 	},
 
 	_replayTouches: function() {
+		var resolvePause;
+		this._pausePromise = new Promise(_.bind(function(resolve, reject) {
+			resolvePause = resolve;
+		}, this));
+
 		var width = this.element.width(),
 			height = this.element.height();
 
-		return this._currentReplay = replayTouches(this.option('recording'), {
+		var replayPromise = replayTouches(this.option('recording'), {
 			target: this.replayContainer[0],
 			scaleX: width/this._bbox.width,
 			scaleY: height/this._bbox.height,
 			offsetX: -this._bbox.left,
 			offsetY: -this._bbox.top
 		});
+
+		var rv = Promise.race([replayPromise, this._pausePromise]);
+
+		rv.stop = function() {
+			replayPromise.stop();
+			resolvePause();
+		};
+		this._currentReplay = rv;
+
+		return rv;
 	}
 });

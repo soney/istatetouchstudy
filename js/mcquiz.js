@@ -183,7 +183,7 @@ $.widget('iss.mcquiz', {
 	},
 
 	_onBeforeUnload: function() {
-		this._save();
+		//this._save();
 	},
 
 	_save: function() {

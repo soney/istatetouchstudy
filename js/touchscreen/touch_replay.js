@@ -43,7 +43,6 @@ function replayTouches(touch_log, options) {
 	var timeouts = [];
 
 	var target = options.target;
-
 	var rv = new Promise(function(resolve, reject) {
 		if(touch_log.length > 0) {
 			var first_touch = touch_log[0],
