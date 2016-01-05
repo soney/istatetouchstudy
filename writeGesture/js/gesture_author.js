@@ -12,6 +12,8 @@ $.widget('iss.gestureAuthor', {
 		this.editor = ace.edit('editor');
 		this.editor.session.setMode(new JavaScriptMode());
 
+		this.recordingDisplay = $('#replay').recordingDisplay();
+
 		var editorStatus = $('#editorStatus');
 		editorStatus.addClass('text-warning').text('...');
 		this._updateGestureList().then($.proxy(function() {
@@ -62,13 +64,14 @@ $.widget('iss.gestureAuthor', {
 		var contents = this._getCurrentGesture();
 		try {
 			eval(contents);
+			this.recordingDisplay.recordingDisplay('option', 'name', this.currentGestureName);
 		} catch(e) {
 			console.error(e.stack);
 		}
 	},
 
 	openGesture: function(gestureName) {
-		getBehavior(gestureName).then($.proxy(function(contents) {
+		getBehaviorCode(gestureName).then($.proxy(function(contents) {
 			this.currentGestureName = gestureName;
 			var headerRegex = this.option('headerRegex'),
 				footerRegex = this.option('footerRegex');
@@ -82,7 +85,7 @@ $.widget('iss.gestureAuthor', {
 
 	openRecording: function(recordingName) {
 		getRecording(recordingName).then($.proxy(function(contents) {
-			$('#replay').text(JSON.stringify(contents));
+			this.recordingDisplay.recordingDisplay('option', 'recording', contents);
 		}, this));
 	},
 
@@ -131,7 +134,3 @@ $.widget('iss.gestureAuthor', {
 		this.editor.destroy();
 	}
 });
-function registerBehavior(name, func) {
-	//console.log('registered', arguments);
-	func();
-}

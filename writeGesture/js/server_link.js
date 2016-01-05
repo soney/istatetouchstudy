@@ -33,7 +33,7 @@ function getBehaviors() {
 	});
 }
 
-function getBehavior(behaviorName) {
+function getBehaviorCode(behaviorName) {
 	return new Promise(function(resolve, reject) {
 		$.ajax({
 			url: '/behavior/'+behaviorName,

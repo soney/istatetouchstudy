@@ -20,11 +20,15 @@
 
 		<script type='text/javascript' src='writeGesture/js/server_link.js'></script>
 		<script type='text/javascript' src='writeGesture/js/gesture_author.js'></script>
-		
+		<script type='text/javascript' src='writeGesture/js/recording_display.js'></script>
+
 		<script type='text/javascript' src='js/touchscreen/touch_replay.js'></script>
 		<script type='text/javascript' src='js/touchscreen/touchscreen_layer.js'></script>
 		<script type='text/javascript' src='js/touchscreen/simple_touch_view.js'></script>
 		<script type='text/javascript' src='js/touchscreen/svg_path_view.js'></script>
+		<script type='text/javascript' src='js/touchscreen/behavior_base.js'></script>
+
+		<script type='text/javascript' src='js/touchscreenOption.js'></script>
 
 		<script type='text/javascript' src='writeGesture/js/main.js'></script>
 	</head>
@@ -49,6 +53,11 @@
 						</label>
 					</div>
 				</form>
+			</div>
+			<div class='row'>
+				<div class='col-md-8'>
+					<strong>Available methods: </strong><samp>onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end</samp>
+				</div>
 			</div>
 			<div class='row'>
 				<div id='editorStatus' class='col-md-8'>

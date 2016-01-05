@@ -3,8 +3,13 @@
 	width: 100%;
 	height: 100%;
 	min-height: 600px;
+	border: 1px solid #BBB;
 }
 
 body, .container {
 	height: 100%;
+}
+
+#replay {
+	background-color: #333;
 }
