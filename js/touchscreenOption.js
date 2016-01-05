@@ -93,36 +93,59 @@ $.widget('iss.touchscreenOption', {
 		}
 	},
 
+	_generateUniqueName: function() {
+		var S4 = function() {
+			return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+		};
+		return ''+S4()+S4()+S4()+S4()+S4()+S4()+S4()+S4()+'';
+	},
+
 	_onTouchStart: function(rid, func, name) {
+		if(!name) {
+			name = this._generateUniqueName();
+		}
 		$(this.element).on('touchstart.'+name, $.proxy(function(event) {
 			if(rid === this._currentReplayID) {
-				func.apply(this, arguments);
+				func.call(this, event.originalEvent);
 			}
 		}, this));
+		return name;
 	},
 
 	_onTouchMove: function(rid, func, name) {
+		if(!name) {
+			name = this._generateUniqueName();
+		}
 		$(this.element).on('touchmove.'+name, $.proxy(function(event) {
 			if(rid === this._currentReplayID) {
-				func.apply(this, arguments);
+				func.call(this, event.originalEvent);
 			}
 		}, this));
+		return name;
 	},
 
 	_onTouchEnd: function(rid, func, name) {
+		if(!name) {
+			name = this._generateUniqueName();
+		}
 		$(this.element).on('touchend.'+name, $.proxy(function(event) {
 			if(rid === this._currentReplayID) {
-				func.apply(this, arguments);
+				func.call(this, event.originalEvent);
 			}
 		}, this));
+		return name;
 	},
 
 	_onTouchCancel: function(rid, func, name) {
+		if(!name) {
+			name = this._generateUniqueName();
+		}
 		$(this.element).on('touchcancel.'+name, $.proxy(function(event) {
 			if(rid === this._currentReplayID) {
-				func.apply(this, arguments);
+				func.call(this, event.originalEvent);
 			}
 		}, this));
+		return name;
 	},
 
 	_offTouchStart: function(rid, name) {
