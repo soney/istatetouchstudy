@@ -1,7 +1,7 @@
-registerBehavior('tap3', function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, fire, begin, update, end) {
+registerBehavior("tap3", function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end) {
 
-	onTouchStart(function(event) {
-		//console.log('tap3');
-	});
+onTouchStart(function(event) {
+	//console.log('tap3');
+});
 
 });

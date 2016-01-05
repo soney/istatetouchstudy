@@ -1,9 +1,11 @@
 {
 	"name": "istatetouchstudy",
 	"dependencies": {
-		"express": "latest",
-		"node-sass-middleware": "latest"
+		"express": "~4.13",
+		"node-sass-middleware": "~0.9",
+		"body-parser": "~1.14"
 	},
 	"engines": {
+		"node": "~5.3"
 	}
 }
