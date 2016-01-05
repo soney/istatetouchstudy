@@ -11,8 +11,6 @@ $.widget('iss.recordingDisplay', {
 	_destroy: function() {
 	},
 
-	setRecording: function(recordingJSON) {
-	},
 	_setOption: function(key, value) {
 		this._super(key, value);
 

@@ -82,10 +82,13 @@ $.widget('iss.touchscreenOption', {
 		} else if(key === 'name') {
 			if(value) {
 				this._bindFunctions();
-				this.behaviorFunc = getBehavior(value);
-				this.behaviorFunc(this.$onTouchStart, this.$onTouchMove, this.$onTouchEnd, this.$onTouchCancel,
-					this.$offTouchStart, this.$offTouchMove, this.$offTouchEnd, this.$offTouchCancel,
-					this.$onGestureFire, this.$onGestureStart, this.$onGestureUpdate, this.$onGestureStop);
+				getBehaviorCode(value).then($.proxy(function(code) {
+					eval(code);
+					this.behaviorFunc = getBehavior(value);
+					this.behaviorFunc(this.$onTouchStart, this.$onTouchMove, this.$onTouchEnd, this.$onTouchCancel,
+						this.$offTouchStart, this.$offTouchMove, this.$offTouchEnd, this.$offTouchCancel,
+						this.$onGestureFire, this.$onGestureStart, this.$onGestureUpdate, this.$onGestureStop);
+				}, this));
 			}
 		}
 	},
@@ -261,12 +264,15 @@ $.widget('iss.touchscreenOption', {
 		}, this));
 
 		var width = this.element.width(),
-			height = this.element.height();
+			height = this.element.height(),
+			scaleX = width/this._bbox.width,
+			scaleY = height/this._bbox.height,
+			scale = Math.max(0.8, Math.min(2, Math.min(scaleX, scaleY)));
 
 		var replayPromise = replayTouches(this.option('recording'), {
 			target: this.replayContainer[0],
-			scaleX: width/this._bbox.width,
-			scaleY: height/this._bbox.height,
+			scaleX: scale,
+			scaleY: scale,
 			offsetX: -this._bbox.left,
 			offsetY: -this._bbox.top
 		});

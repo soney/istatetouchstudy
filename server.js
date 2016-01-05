@@ -4,6 +4,7 @@ var express = require('express'),
 	fs = require('fs'),
 	app = express(),
 	bodyParser = require('body-parser'),
+	PORT = 3000,
 	BEHAVIORS_DIR = path.join(__dirname, 'js', 'behaviors'),
 	RECORDINGS_DIR = path.join(__dirname, 'js', 'recordings');
 
@@ -37,7 +38,7 @@ app	.use(express.static(__dirname))
 				data: recordings.filter(function(filename) {
 					return path.extname(filename) === '.json';
 				}).map(function(filename) {
-					return path.basename(filename, '.json');
+					return path.basename(filename, '.recording.json');
 				})
 			};
 		}, function(err) {
@@ -54,7 +55,7 @@ app	.use(express.static(__dirname))
 	})
 	.get('/recording/:recordingName', function(req, res) {
 		var recordingName = req.params.recordingName,
-			recordingPath = path.join(RECORDINGS_DIR, recordingName+'.json');
+			recordingPath = path.join(RECORDINGS_DIR, recordingName+'.recording.json');
 
 		res.sendFile(recordingPath);
 	})
@@ -73,7 +74,7 @@ app	.use(express.static(__dirname))
 	})
 	.post('/setRecording/:recordingName', function(req, res) {
 		var recordingName = req.params.recordingName,
-			recordingPath = path.join(RECORDINGS_DIR, recordingName+'.json'),
+			recordingPath = path.join(RECORDINGS_DIR, recordingName+'.recording.json'),
 			contents = req.body.contents;
 
 		writeFile(recordingPath, contents).then(function( ){
@@ -85,8 +86,23 @@ app	.use(express.static(__dirname))
 		});
 	});
 
-app.listen(3000);
-console.log('listening on localhost:3000');
+var os = require('os'),
+	interfaces = os.networkInterfaces(),
+	addresses = [],
+	address;
+
+for (k in interfaces) {
+    for (k2 in interfaces[k]) {
+        address = interfaces[k][k2];
+        if (address.family == 'IPv4' && !address.internal) {
+            addresses.push(address.address)
+        }
+    }
+}
+
+var URL = 'http://' + addresses[0] + ':' + PORT + '/';
+app.listen(PORT);
+console.log("Open " + URL + " or " + URL + "writeGesture.html in a Web browser.");
 
 function readDirectory(dirPath) {
 	return new Promise(function(resolve, reject) {

@@ -2,7 +2,7 @@ $.widget('iss.gestureAuthor', {
 	options: {
 		headerText: 'registerBehavior("$NAME", function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end) {\n\n',
 		footerText: '\n\n});',
-		headerRegex: /registerBehavior\("(\w+)", function\(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end\) {\n\n/,
+		headerRegex: /registerBehavior\("([a-zA-Z0-9_\s]+)", function\(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end\) {\n\n/,
 		footerRegex: /\n\n}\);/
 	},
 
@@ -32,7 +32,8 @@ $.widget('iss.gestureAuthor', {
 			$('#behaviors').on('change', $.proxy(function(event) {
 				var behaviorName = $(event.target).val();
 				this.openGesture(behaviorName);
-				$('#recordings').val(behaviorName + '.recording');
+				$('#recordings').val(behaviorName);
+				this.openRecording(behaviorName);
 			}, this));
 			$('#recordings').on('change', $.proxy(function(event) {
 				this.openRecording($(event.target).val());
