@@ -90,51 +90,59 @@ $.widget('iss.touchscreenOption', {
 		}
 	},
 
-	_onTouchStart: function(rid, func) {
+	_onTouchStart: function(rid, func, name) {
+		$(this.element).on('touchstart.'+name, $.proxy(function(event) {
+			if(rid === this._currentReplayID) {
+				func.apply(this, arguments);
+			}
+		}, this));
+	},
+
+	_onTouchMove: function(rid, func, name) {
+		$(this.element).on('touchmove.'+name, $.proxy(function(event) {
+			if(rid === this._currentReplayID) {
+				func.apply(this, arguments);
+			}
+		}, this));
+	},
+
+	_onTouchEnd: function(rid, func, name) {
+		$(this.element).on('touchend.'+name, $.proxy(function(event) {
+			if(rid === this._currentReplayID) {
+				func.apply(this, arguments);
+			}
+		}, this));
+	},
+
+	_onTouchCancel: function(rid, func, name) {
+		$(this.element).on('touchcancel.'+name, $.proxy(function(event) {
+			if(rid === this._currentReplayID) {
+				func.apply(this, arguments);
+			}
+		}, this));
+	},
+
+	_offTouchStart: function(rid, name) {
 		if(rid === this._currentReplayID) {
-			$(this.element).on('touchstart', func);
+			$(this.element).off('touchstart.'+name);
 		}
 	},
 
-	_onTouchMove: function(rid, func) {
+	_offTouchMove: function(rid, name) {
 		if(rid === this._currentReplayID) {
-			$(this.element).on('touchmove', func);
+			$(this.element).off('touchmove.'+name);
 		}
 	},
 
-	_onTouchEnd: function(rid, func) {
+	_offTouchEnd: function(rid, name) {
 		if(rid === this._currentReplayID) {
-			$(this.element).on('touchend', func);
+			$(this.element).off('touchend.'+name);
 		}
 	},
 
-	_onTouchCancel: function(rid, func) {
+	_offTouchCancel: function(rid, name) {
 		if(rid === this._currentReplayID) {
-			$(this.element).on('touchcancel', func);
-		}
-	},
-
-	_offTouchStart: function(rid, func) {
-		if(rid === this._currentReplayID) {
-			$(this.element).off('touchstart', func);
-		}
-	},
-
-	_offTouchMove: function(rid, func) {
-		if(rid === this._currentReplayID) {
-			$(this.element).off('touchmove', func);
-		}
-	},
-
-	_offTouchEnd: function(rid, func) {
-		if(rid === this._currentReplayID) {
-			$(this.element).off('touchend', func);
-		}
-	},
-
-	_offTouchCancel: function(rid, func) {
-		if(rid === this._currentReplayID) {
-			$(this.element).off('touchcancel', func);
+			$(this.element).off('touchcancel.'+name);
 		}
 	},
 
