@@ -54,7 +54,6 @@ function replayTouches(touch_log, options) {
 				var timeoutID = setTimeout(function() {
 					var touch_event,
 						changedTouches = e.changedTouches,
-						firstChangedTouch = changedTouches[0],
 						type = e.type;
 
 					changedTouches.forEach(function(originalTouch) {
@@ -72,28 +71,22 @@ function replayTouches(touch_log, options) {
 						});
 
 						if(type === "touchstart" || !touches.hasOwnProperty(newTouch.identifier)) {
-							changedTouches.forEach(function(originalTouch) {
-								//target = document.elementFromPoint(originalTouch.pageX, originalTouch.pageY) || root;
-								var touch = document.createTouch ? document.createTouch(root, target, newTouch.identifier, newTouch.pageX, newTouch.pageY,
-																	  newTouch.screenX, newTouch.screenY, newTouch.clientY, newTouch.clientY)
-																	  : newTouch;
-								touches[touch.identifier] = touch;
-								touch_targets[touch.identifier] = target;
-							});
+							var touch = document.createTouch ? document.createTouch(root, target, newTouch.identifier, newTouch.pageX, newTouch.pageY,
+																  newTouch.screenX, newTouch.screenY, newTouch.clientY, newTouch.clientY)
+																  : newTouch;
+							touches[newTouch.identifier] = touch;
+							touch_targets[newTouch.identifier] = target;
 						} else {
-							changedTouches.forEach(function(touch) {
-								//target = document.elementFromPoint(touch.pageX, touch.pageY) || root;
-								var old_touch = touches[touch.identifier];
-								_.extend(old_touch, {
-									pageX: page.x,
-									pageY: page.y,
-									screenX: screen.x,
-									screenY: screen.y,
-									clientX: client.x,
-									clientY: client.y
-								});
-								touch_targets[touch.identifier] = target;
+							var old_touch = touches[newTouch.identifier];
+							_.extend(old_touch, {
+								pageX: page.x,
+								pageY: page.y,
+								screenX: screen.x,
+								screenY: screen.y,
+								clientX: client.x,
+								clientY: client.y
 							});
+							touch_targets[newTouch.identifier] = target;
 						}
 					});
 
