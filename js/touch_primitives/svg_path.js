@@ -1,7 +1,4 @@
-var cjs = ist.cjs,
-	_ = ist._;
-
-ist.Path = function() {
+var Path = function() {
 	this._tree = [];
 	this._curr_tree_node = this._tree;
 	this._stack = [this._tree];
@@ -243,4 +240,4 @@ ist.Path = function() {
 			stringified_command = commands.join(" ");
 		return stringified_command;
 	};
-}(ist.Path));
+}(Path));

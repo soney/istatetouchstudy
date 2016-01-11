@@ -16,9 +16,11 @@ var average = function(arr) {
 		return (new Date()).getTime();
 	};
 
-var touches = {}, touchClusters = [];
+var touches, touchClusters = [];
 
 function addListeners() {
+	touches = cjs({});
+
 	window.addEventListener("touchstart",  _onTouchStart);
 	window.addEventListener("touchmove",   _onTouchMove);
 	window.addEventListener("touchend",    _onTouchEnd);
@@ -73,6 +75,8 @@ function _onTouchStart(event) {
 			return !touchCluster.isSatisfied();
 		}),
 		currTime = getTime();
+
+	cjs.wait();
 
 	_.each(touchClusters, function(touchCluster) {
 		//touchCluster.pruneTimedOutUsableFingers();
@@ -140,6 +144,8 @@ function _onTouchStart(event) {
 
 	updateTouchDistributions(event.changedTouches);
 
+	cjs.signal();
+
 	// Recompute active touches
 	event.preventDefault();
 	event.stopPropagation();
@@ -147,6 +153,7 @@ function _onTouchStart(event) {
 
 function _onTouchMove(event) {
 	var currTime = getTime();
+	cjs.wait();
 
 	_.each(event.changedTouches, function(touch) {
 		var touchMap = touches.get(parseInt(touch.identifier));
@@ -155,6 +162,7 @@ function _onTouchMove(event) {
 				.put('movedAt', currTime);
 	});
 
+	cjs.signal();
 
 	// radius checking
 
@@ -164,6 +172,7 @@ function _onTouchMove(event) {
 
 function _onTouchEnd(event) {
 	var currTime = getTime();
+	cjs.wait();
 
 	_.each(touchClusters, function(touchCluster) { touchCluster.removeUsableFingers(event.changedTouches); });
 
@@ -191,6 +200,7 @@ function _onTouchEnd(event) {
 
 	updateTouchDistributions(false, event.changedTouches);
 
+	cjs.signal();
 
 	// Recompute active touches
 	event.preventDefault();
@@ -312,7 +322,7 @@ function updateTouchDistributions(addedTouches, removedTouches, movedTouches) {
 var twoPI = 2*Math.PI,
 	tc_id = 0;
 
-ist.TouchCluster = function (options) {
+var TouchCluster = function (options) {
 	this.options = _.extend({
 		downInside: false,
 		downOutside: false,
@@ -329,9 +339,9 @@ ist.TouchCluster = function (options) {
 	this.satisfied = new ist.Event();
 	this.unsatisfied = new ist.Event();
 
-	this.$usableFingers = [];
-	this.$usingFingers = [];
-	this.$satisfied = false;
+	this.$usableFingers = cjs([]);
+	this.$usingFingers = cjs([]);
+	this.$satisfied = cjs(false);
 
 	this.$usingTouchInfo = cjs(function() {
 		var touchLocations = [];
@@ -343,7 +353,7 @@ ist.TouchCluster = function (options) {
 		return touchLocations;
 	}, {context: this});
 
-	this.$startCenter = {x: false, y: false};
+	this.$startCenter = cjs.constraint({x: false, y: false});
 
 	this.$center = cjs(function() {
 		var touchLocations = this.$usingTouchInfo.get();
@@ -357,7 +367,7 @@ ist.TouchCluster = function (options) {
 		}
 	}, {context: this});
 
-	this.$endCenter = false;
+	this.$endCenter = cjs(false);
 
 	this.$startRadius = cjs(function() {
 		var touchLocations = this.$usingTouchInfo.get(),
@@ -511,6 +521,7 @@ ist.TouchCluster = function (options) {
 		this.$endScale.set(this.$scale.get());
 	};
 	proto.postUnsatisfied = function() {
+		cjs.wait();
 		this.$usingFingers.forEach(function(touchID) {
 			var touch = touches.get(touchID),
 				usedBy = touch.get('usedBy'),
@@ -531,9 +542,12 @@ ist.TouchCluster = function (options) {
 		this.$usingFingers.setValue([]);
 		this.$startCenter.set({ x: false, y: false });
 		this.unsatisfied.fire();
+		cjs.signal();
 	};
 
 	proto.postSatisfied = function(usingFingers) {
+		cjs.wait();
+
 		this.$satisfied.set(true);
 		this.$usingFingers.setValue(usingFingers);
 		_.each(usingFingers, function(touchID) {
@@ -556,6 +570,8 @@ ist.TouchCluster = function (options) {
 		if(this.isGreedy()) {
 			this.claimTouches();
 		}
+
+		cjs.signal();
 	};
 
 	proto.getSatisfiedEvent = function() { return this.satisfied; };
@@ -675,6 +691,7 @@ ist.TouchCluster = function (options) {
 	};
 
 	proto.claimTouches = function() {
+		cjs.wait();
 		this.$claimed.set(true);
 		this.$usingFingers.forEach(function(touchID) {
 			var touch = touches.get(touchID),
@@ -699,9 +716,11 @@ ist.TouchCluster = function (options) {
 				}
 			});
 		}, this);
+		cjs.signal();
 	};
 
 	proto.disclaimTouches = function() {
+		cjs.wait();
 		this.$claimed.set(false);
 		this.$usingFingers.forEach(function(touchID) {
 			var touch = touches.get(touchID),
@@ -711,10 +730,11 @@ ist.TouchCluster = function (options) {
 				claimedBy.splice(index, 1);
 			}
 		}, this);
+		cjs.signal();
 	};
 
 	proto.claimsTouches = function() {
 		return this.$claimed.get();
 	};
 	proto.id = proto.sid = function() { return this._id; };
-}(ist.TouchCluster));
+}(TouchCluster));
