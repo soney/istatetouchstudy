@@ -1,4 +1,4 @@
-registerBehavior("tap", function(TouchCluster, Path, fire, begin, update, end) {
+registerBehavior("tap", "primitives", function(TouchCluster, Path, fire, begin, update, end) {
 
 
 

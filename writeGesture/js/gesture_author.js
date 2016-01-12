@@ -2,15 +2,15 @@ $.widget('iss.gestureAuthor', {
 	options: {
 		conditions: ['control', 'primitives'],
 
-		controlHeaderText: 'registerBehavior("$NAME", function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end) {\n\n',
+		controlHeaderText: 'registerBehavior("$NAME", "control", function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end) {\n\n',
 		controlFooterText: '\n\n});',
-		controlHeaderRegex: /registerBehavior\("([a-zA-Z0-9_\s]+)", function\(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end\) {\n\n/,
+		controlHeaderRegex: /registerBehavior\("([a-zA-Z0-9_\s]+)", "control", function\(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end\) {\n\n/,
 		controlFooterRegex: /\n\n}\);/,
 		controlAvailableMethods: ['onTouchStart', 'onTouchMove', 'onTouchEnd', 'onTouchCancel', 'offTouchStart', 'offTouchMove', 'offTouchEnd', 'offTouchCancel', 'fire', 'begin', 'update', 'end', 'setTimeout', 'clearTimeout'],
 
-		primitivesHeaderText: 'registerBehavior("$NAME", function(TouchCluster, Path, fire, begin, update, end) {\n\n',
+		primitivesHeaderText: 'registerBehavior("$NAME", "primitives", function(TouchCluster, Path, fire, begin, update, end) {\n\n',
 		primitivesFooterText: '\n\n});',
-		primitivesHeaderRegex: /registerBehavior\("([a-zA-Z0-9_\s]+)", function\(TouchCluster, Path, fire, begin, update, end\) {\n\n/,
+		primitivesHeaderRegex: /registerBehavior\("([a-zA-Z0-9_\s]+)", "primitives", function\(TouchCluster, Path, fire, begin, update, end\) {\n\n/,
 		primitivesFooterRegex: /\n\n}\);/,
 		primitivesAvailableMethods: ['TouchCluster', 'Path', 'fire', 'begin', 'update', 'end', 'setTimeout', 'clearTimeout'],
 
@@ -99,11 +99,12 @@ $.widget('iss.gestureAuthor', {
 	_openImplementation: function(implementation_name) {
 		var behaviorName = this.option('currentGestureName');
 		this.option('currentCondition', implementation_name);
+		this.recordingDisplay.recordingDisplay('option', 'implementation', implementation_name);
+
 		this._updateAvailableMethodsList();
 		this._openGesture(this.option('currentGestureName')).then($.proxy(function() {
 			this._openRecording(behaviorName);
 		}, this));
-		this._openGesture(this.option('currentGestureName'));
 	},
 
 	_updateImplementationsList: function() {

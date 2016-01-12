@@ -1,4 +1,4 @@
-registerBehavior("press and hold", function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end) {
+registerBehavior("press and hold", "control", function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end) {
 
 var MIN_TIME_MILLISECONDS = 1000, // wait 1000 milliseconds
     MAX_MOVEMENT = 50, // make sure the finger doesnt move more than

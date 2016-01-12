@@ -1,4 +1,4 @@
-registerBehavior("tap", function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end) {
+registerBehavior("tap", "control", function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end) {
 
 onTouchStart(function(event) { 
     var touch = event.changedTouches[0]; 

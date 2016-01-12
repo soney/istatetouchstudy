@@ -10,7 +10,8 @@ $.widget('iss.touchscreenOption', {
 	options: {
 		name: '',
 		recording: false,
-		touchDisplayRadius: 10
+		touchDisplayRadius: 10,
+		implementation: 'control'
 	},
 
 	_create: function() {
@@ -83,11 +84,19 @@ $.widget('iss.touchscreenOption', {
 			if(value) {
 				this._bindFunctions();
 				getBehaviorCode(value).then($.proxy(function(code) {
+					var implementation = this.option('implementation');
 					eval(code);
-					this.behaviorFunc = getBehavior(value);
-					this.behaviorFunc(this.$onTouchStart, this.$onTouchMove, this.$onTouchEnd, this.$onTouchCancel,
-						this.$offTouchStart, this.$offTouchMove, this.$offTouchEnd, this.$offTouchCancel,
-						this.$onGestureFire, this.$onGestureStart, this.$onGestureUpdate, this.$onGestureStop);
+					this.behaviorFunc = getBehavior(value, implementation);
+
+					if(implementation === 'primitives') {
+						this.behaviorFunc(TouchCluster, Path, this.$onGestureFire, this.$onGestureStart, this.$onGestureUpdate, this.$onGestureStop);
+					} else if(implementation === 'control') {
+						this.behaviorFunc(this.$onTouchStart, this.$onTouchMove, this.$onTouchEnd, this.$onTouchCancel,
+							this.$offTouchStart, this.$offTouchMove, this.$offTouchEnd, this.$offTouchCancel,
+							this.$onGestureFire, this.$onGestureStart, this.$onGestureUpdate, this.$onGestureStop);
+					} else {
+						throw new Error('Unknown implementation ' + implementation);
+					}
 				}, this));
 			}
 		}

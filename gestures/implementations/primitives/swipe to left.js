@@ -1,4 +1,4 @@
-registerBehavior("swipe to left", function(TouchCluster, Path, fire, begin, update, end) {
+registerBehavior("swipe to left", "primitives", function(TouchCluster, Path, fire, begin, update, end) {
 
 
 

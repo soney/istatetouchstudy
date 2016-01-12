@@ -1,7 +1,8 @@
 $.widget('iss.recordingDisplay', {
 	options: {
 		name: '',
-		recording: false
+		recording: false,
+		implementation: 'control'
 	},
 
 	_create: function() {
@@ -17,6 +18,8 @@ $.widget('iss.recordingDisplay', {
 		if(key === 'name') {
 			this.element.touchscreenOption('option', key, value);
 		} else if(key === 'recording') {
+			this.element.touchscreenOption('option', key, value);
+		} else if(key === 'implementation') {
 			this.element.touchscreenOption('option', key, value);
 		}
 	}

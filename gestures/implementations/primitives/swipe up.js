@@ -1,4 +1,4 @@
-registerBehavior("swipe up", function(TouchCluster, Path, fire, begin, update, end) {
+registerBehavior("swipe up", "primitives", function(TouchCluster, Path, fire, begin, update, end) {
 
 
 

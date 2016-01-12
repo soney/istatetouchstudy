@@ -323,6 +323,7 @@ var twoPI = 2*Math.PI,
 	tc_id = 0;
 
 var TouchCluster = function (options) {
+	able.make_this_listenable(this);
 	this.options = _.extend({
 		downInside: false,
 		downOutside: false,
@@ -336,8 +337,6 @@ var TouchCluster = function (options) {
 	}, options);
 
 	this._id = tc_id++;
-	this.satisfied = new ist.Event();
-	this.unsatisfied = new ist.Event();
 
 	this.$usableFingers = cjs([]);
 	this.$usingFingers = cjs([]);
@@ -473,6 +472,7 @@ var TouchCluster = function (options) {
 
 (function(My) {
 	var proto = My.prototype;
+	able.make_proto_listenable(proto);
 
 	proto.destroy = function(silent) {
 		var index = touchClusters.indexOf(this);
@@ -483,7 +483,6 @@ var TouchCluster = function (options) {
 
 		this.$usableFingers.destroy(true);
 		this.$usingFingers.destroy(true);
-		this.$satisfied.destroy(true);
 		this.$usingTouchInfo.destroy(true);
 
 		this.$startCenter.destroy(true);
@@ -541,7 +540,7 @@ var TouchCluster = function (options) {
 		this.$usableFingers.setValue([]);
 		this.$usingFingers.setValue([]);
 		this.$startCenter.set({ x: false, y: false });
-		this.unsatisfied.fire();
+		this._emit('unsatisfied');
 		cjs.signal();
 	};
 
@@ -565,7 +564,7 @@ var TouchCluster = function (options) {
 			this.$startCenter.set({ x: false, y: false });
 		}
 
-		this.satisfied.fire();
+		this._emit('satisfied');
 
 		if(this.isGreedy()) {
 			this.claimTouches();
@@ -574,8 +573,8 @@ var TouchCluster = function (options) {
 		cjs.signal();
 	};
 
-	proto.getSatisfiedEvent = function() { return this.satisfied; };
-	proto.getUnsatisfiedEvent = function() { return this.unsatisfied; };
+	//proto.getSatisfiedEvent = function() { return this.satisfied; };
+	//proto.getUnsatisfiedEvent = function() { return this.unsatisfied; };
 
 	proto.getX = function() { return this.$xConstraint.get(); };
 	proto.getY = function() { return this.$yConstraint.get(); };
