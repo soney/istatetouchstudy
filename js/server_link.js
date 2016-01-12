@@ -15,10 +15,14 @@ function getRecordings() {
 		});
 	});
 }
-function getBehaviors() {
+function getBehaviors(condition) {
+	if(!condition) {
+		condition = 'control';
+	}
+
 	return new Promise(function(resolve, reject) {
 		$.ajax({
-			url: '/behaviors',
+			url: '/behaviors/'+condition,
 			method: 'GET',
 			data: {}
 		}).done(function(result) {
@@ -33,10 +37,13 @@ function getBehaviors() {
 	});
 }
 
-function getBehaviorCode(behaviorName) {
+function getBehaviorCode(behaviorName, condition) {
+	if(!condition) {
+		condition = 'control';
+	}
 	return new Promise(function(resolve, reject) {
 		$.ajax({
-			url: '/behavior/'+behaviorName,
+			url: '/behavior/'+condition+'/'+behaviorName,
 			method: 'GET',
 			dataType: 'text',
 			data: {}
@@ -67,10 +74,13 @@ function getRecording(recordingName) {
 	});
 }
 
-function setBehavior(behaviorName, contents) {
+function setBehavior(behaviorName, contents, condition) {
+	if(!condition) {
+		condition = 'control';
+	}
 	return new Promise(function(resolve, reject) {
 		$.ajax({
-			url: '/setBehavior/'+behaviorName,
+			url: '/setBehavior/' + condition + '/' + behaviorName,
 			method: 'POST',
 			data: {
 				contents: contents

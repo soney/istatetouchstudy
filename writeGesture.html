@@ -28,6 +28,9 @@
 		<script type='text/javascript' src='js/touchscreen/svg_path_view.js'></script>
 		<script type='text/javascript' src='js/touchscreen/behavior_base.js'></script>
 
+		<script type='text/javascript' src='js/touch_primitives/svg_path.js'></script>
+		<script type='text/javascript' src='js/touch_primitives/touch_cluster.js'></script>
+
 		<script type='text/javascript' src='js/touchscreenOption.js'></script>
 
 		<script type='text/javascript' src='writeGesture/js/main.js'></script>
@@ -35,7 +38,16 @@
 	<body>
 		<div class='container'>
 			<div class='row'>
-				<form class="form-inline col-md-8">
+				<form class="form-inline col-md-3">
+					<div class="form-group">
+						<label>
+							Implementation:
+							<select id='implementations' class="form-control">
+							</select>
+						</label>
+					</div>
+				</form>
+				<form class="form-inline col-md-3">
 					<div class="form-group">
 						<label>
 							Behavior:
@@ -44,6 +56,10 @@
 						</label>
 					</div>
 				</form>
+				<div class='col-md-2 text-right'>
+					<span id='save_status'></span>
+					<button id='save' class='btn btn-primary'>Save</button>
+				</div>
 				<form class="form-inline col-md-4">
 					<div class="form-group">
 						<label>
@@ -56,18 +72,14 @@
 			</div>
 			<div class='row'>
 				<div class='col-md-8'>
-					<strong>Available methods: </strong><samp>onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end, setTimeout, clearTimeout</samp>
+					<div id="editor"></div>
 				</div>
-			</div>
-			<div class='row'>
-				<div id='editorStatus' class='col-md-8'>
+				<div id='replay' class='col-md-4'>
 				</div>
 			</div>
 			<div class='row'>
 				<div class='col-md-8'>
-					<div id="editor"></div>
-				</div>
-				<div id='replay' class='col-md-4'>
+					<strong>Available methods: </strong><samp id='avilableMethods'></samp>
 				</div>
 			</div>
 		</div>

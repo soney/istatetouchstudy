@@ -6,7 +6,7 @@ var MIN_TIME_MILLISECONDS = 1000, // wait 1000 milliseconds
     originalLocation,
     touchID,
     timeoutID;
-    
+
 onTouchStart(function(event) { // when the user presses a finger down...
     var touch = event.changedTouches[0]; // event.changedTouches is all of the 
                                     // touch information affected by this event

@@ -5,8 +5,8 @@ var express = require('express'),
 	app = express(),
 	bodyParser = require('body-parser'),
 	PORT = 3000,
-	BEHAVIORS_DIR = path.join(__dirname, 'js', 'behaviors'),
-	RECORDINGS_DIR = path.join(__dirname, 'js', 'recordings');
+	BEHAVIORS_DIR = path.join(__dirname, 'gestures', 'implementations'),
+	RECORDINGS_DIR = path.join(__dirname, 'gestures', 'recordings');
 
 app.use(sassMiddleware({
 	src: path.join(__dirname, 'css'),
@@ -17,8 +17,10 @@ app.use(sassMiddleware({
 
 app	.use(express.static(__dirname))
 	.use(bodyParser.urlencoded({ extended: false }))
-	.get('/behaviors', function(req, res) {
-		readDirectory(BEHAVIORS_DIR).then(function(behaviors) {
+	.get('/behaviors/:condition', function(req, res) {
+		var condition = req.params.condition;
+
+		readDirectory(path.join(BEHAVIORS_DIR, condition)).then(function(behaviors) {
 			return {
 				data: behaviors.filter(function(filename) {
 					return path.extname(filename) === '.js';
@@ -47,9 +49,10 @@ app	.use(express.static(__dirname))
 			res.json(response);
 		});
 	})
-	.get('/behavior/:behaviorName', function(req, res) {
+	.get('/behavior/:condition/:behaviorName', function(req, res) {
 		var behaviorName = req.params.behaviorName,
-			behaviorPath = path.join(BEHAVIORS_DIR, behaviorName+'.js');
+			condition = req.params.condition,
+			behaviorPath = path.join(BEHAVIORS_DIR, condition, behaviorName+'.js');
 
 		res.sendFile(behaviorPath);
 	})
@@ -59,9 +62,10 @@ app	.use(express.static(__dirname))
 
 		res.sendFile(recordingPath);
 	})
-	.post('/setBehavior/:behaviorName', function(req, res) {
+	.post('/setBehavior/:condition/:behaviorName', function(req, res) {
 		var behaviorName = req.params.behaviorName,
-			behaviorPath = path.join(BEHAVIORS_DIR, behaviorName+'.js'),
+			condition = req.params.condition,
+			behaviorPath = path.join(BEHAVIORS_DIR, condition, behaviorName+'.js'),
 			contents = req.body.contents;
 
 		writeFile(behaviorPath, contents).then(function( ){
