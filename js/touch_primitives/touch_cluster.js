@@ -468,11 +468,31 @@ var TouchCluster = function (options) {
 
 	touchClusters.push(this);
 	if(touchClusters.length === 1) { addListeners(); }
+	this.crossEvents = [];
 };
 
 (function(My) {
 	var proto = My.prototype;
 	able.make_proto_listenable(proto);
+
+	var oldOn = proto.on,
+		oldOff = proto.off;
+
+	proto.on = function(eventType, arg2) {
+		oldOn.apply(this, arguments);
+		if(eventType === 'cross') {
+			var path = arg2;
+			var crossEvent = new CrossEvent({
+				cluster: this,
+				path: path,
+			});
+
+			this.crossEvents.push(crossEvent);
+		}
+	};
+	proto.off = function(eventType, callback) {
+		oldOn.apply(this, arguments);
+	};
 
 	proto.destroy = function(silent) {
 		var index = touchClusters.indexOf(this);

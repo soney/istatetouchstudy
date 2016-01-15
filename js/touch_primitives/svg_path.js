@@ -1,8 +1,12 @@
+var currentPaths = [];
+
 var Path = function() {
 	this._tree = [];
 	this._curr_tree_node = this._tree;
 	this._stack = [this._tree];
 	this.drawing_fns = [];
+	
+	currentPaths.push(this);
 };
 
 (function(My) {

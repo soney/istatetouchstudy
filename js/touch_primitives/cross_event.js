@@ -1,3 +1,39 @@
+function CrossEvent(options) {
+	this.options = _.extend({
+		path: false,
+		cluster: false,
+		minVelocity: false,
+		maxVelocity: false
+	}, options);
+	addCrossingPathListener
+
+	able.make_this_listenable(this);
+
+	this._onCross = _.bind(this.onCross, this);
+	addCrossingPathListener(this.getCluster(), this.getPath(), this._onCross);
+}
+
+(function(My) {
+	var proto = My.prototype;
+	able.make_proto_listenable(proto);
+
+	proto.destroy = function() {
+		removeCrossingPathListener(this.getPath());
+	};
+
+	proto.getPath = function() {
+		return this.options.path;
+	};
+
+	proto.getCluster = function() {
+		return this.options.cluster;
+	};
+
+	proto.onCross = function(event) {
+		this.fire('cross', event);
+	};
+}(CrossEvent))
+/*
 ist.CrossEventAttachment = ist.register_attachment("cross_event_attachment", {
 		ready: function(contextual_object) {
 		},
@@ -98,6 +134,7 @@ ist.CrossEventAttachment = ist.register_attachment("cross_event_attachment", {
 			}
 		}
 	});
+	*/
 
 
 var lowerCase = String.prototype.toLowerCase,

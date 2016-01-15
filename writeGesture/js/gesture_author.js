@@ -14,7 +14,7 @@ $.widget('iss.gestureAuthor', {
 		primitivesFooterRegex: /\n\n}\);/,
 		primitivesAvailableMethods: ['TouchCluster', 'Path', 'fire', 'begin', 'update', 'end', 'setTimeout', 'clearTimeout'],
 
-		currentCondition: 'control',
+		currentCondition: 'primitives',
 		currentGestureName: false
 	},
 
@@ -109,16 +109,19 @@ $.widget('iss.gestureAuthor', {
 
 	_updateImplementationsList: function() {
 		var implementations = this.option('conditions'),
-			implementationsSelect = $('#implementations');
+			implementationsSelect = $('#implementations'),
+			currentImplementation = this.option('currentCondition');
 
 		_.each(implementations, function(implementation) {
 			$('<option />', {
 				text: implementation,
 				attr: {
-					value: implementation
+					value: implementation,
+					selected: (currentImplementation === implementation)
 				}
 			}).appendTo(implementationsSelect);
 		});
+		this.recordingDisplay.recordingDisplay('option', 'implementation', currentImplementation);
 	},
 
 	save: function() {
