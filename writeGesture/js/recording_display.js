@@ -6,7 +6,9 @@ $.widget('iss.recordingDisplay', {
 	},
 
 	_create: function() {
-		this.element.touchscreenOption();
+		this.element.touchscreenOption({
+			showPaths: true
+		});
 	},
 
 	_destroy: function() {

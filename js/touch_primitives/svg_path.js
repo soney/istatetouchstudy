@@ -1,12 +1,16 @@
-var currentPaths = [];
+var pathList = {
+	paths: []
+};
+able.make_this_listenable(pathList);
+able.make_proto_listenable(pathList);
 
 var Path = function() {
-	this._tree = [];
+	this._tree = cjs.array();
 	this._curr_tree_node = this._tree;
 	this._stack = [this._tree];
-	this.drawing_fns = [];
-	
-	currentPaths.push(this);
+
+	pathList._emit('pathCreated', this);
+	pathList.paths.push(this);
 };
 
 (function(My) {
@@ -240,8 +244,12 @@ var Path = function() {
 	};
 
 	proto.toString = function() {
-		var commands = _.map(this._tree, nodeToString),
+		var commands = this._tree.map(nodeToString),
 			stringified_command = commands.join(" ");
 		return stringified_command;
+	};
+
+	proto.destroy = function() {
+		pathList._emit('pathDestroyed', this);
 	};
 }(Path));

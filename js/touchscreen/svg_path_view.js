@@ -3,9 +3,9 @@ $.widget("interstate.svg_path", {
 		cluster: false,
 		paper: false,
 		defaultPathAttributes: {
-			fill: "#666",
+			fill: "#888",
 			"fill-opacity": 0.05,
-			stroke: "black",
+			stroke: "#EEE",
 			"stroke-width": 2,
 			"stroke-dasharray": "5, 5, 2, 5"
 		}
@@ -23,9 +23,8 @@ $.widget("interstate.svg_path", {
 			attributes = _.extend({}, this.option("defaultPathAttributes"), pathAttributes),
 			paper_path = paper.path("M0,0").attr(attributes);
 
-/*
 		var draw_fn = cjs.liven(function() {
-			var pathStr = ist.convertObjectToPath(path);
+			var pathStr = path.toString();
 			if(!pathStr) {
 				pathStr = "M0,0";
 			}
@@ -37,7 +36,6 @@ $.widget("interstate.svg_path", {
 				paper_path.remove();
 			}
 		});
-		*/
 
 		return draw_fn;
 	},

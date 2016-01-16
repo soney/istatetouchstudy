@@ -11,7 +11,8 @@ $.widget('iss.touchscreenOption', {
 		name: '',
 		recording: false,
 		touchDisplayRadius: 10,
-		implementation: 'control'
+		implementation: 'control',
+		showPaths: false
 	},
 
 	_create: function() {
@@ -43,10 +44,27 @@ $.widget('iss.touchscreenOption', {
 			recording: this.option('recording'),
 			name: this.option('name')
 		});
+
+		this.$onPathCreated = $.proxy(this._onPathCreated, this)
+		this.$onPathDestroyed = $.proxy(this._onPathDestroyed, this)
+		pathList.on('pathCreated', this.$onPathCreated);
+		pathList.on('pathDestroyed', this.$onPathDestroye);
+		_.each(pathList.paths, function(path) {
+			this._onPathCreated(path);
+		}, this);
+
 		this._loopReplay();
 	},
 
+	_onPathCreated: function(path) {
+		this.replayContainer.touchscreen_layer('addPath', path);
+	},
+	_onPathDestroyed: function(path) {
+		this.replayContainer.touchscreen_layer('removePath', path);
+	},
+
 	_destroy: function() {
+		pathList.off('pathCreated', this.$onPathCreated)
 		this.replayContainer.off('touchstart.usertouch touchend.usertouch touchcancel.usertouch touchmove.usertouch');
 	},
 
