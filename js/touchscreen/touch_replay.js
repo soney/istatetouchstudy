@@ -40,18 +40,19 @@ function replayTouches(touch_log, options) {
 		};
 	}
 
-	var timeouts = [];
+	var timeouts = [],
+		fns = [],
+		touches = {};
 
 	var target = options.target;
 	var rv = new Promise(function(resolve, reject) {
 		if(touch_log.length > 0) {
 			var first_touch = touch_log[0],
 				starting_time = first_touch.timestamp,
-				touches = {},
 				touch_targets = {};
 
 			touch_log.forEach(function(e, index) {
-				var timeoutID = setTimeout(function() {
+				var fn = function() {
 					var touch_event,
 						changedTouches = e.changedTouches,
 						type = e.type;
@@ -153,7 +154,11 @@ function replayTouches(touch_log, options) {
 					if(index === touch_log.length-1) {
 						resolve();
 					}
-				}, e.timestamp - starting_time);
+					timeouts.shift();
+					fns.shift();
+				};
+				var timeoutID = setTimeout(fn, e.timestamp - starting_time);
+				fns.push(fn);
 				timeouts.push(timeoutID);
 			});
 		}
@@ -162,6 +167,9 @@ function replayTouches(touch_log, options) {
 	rv.stop = function() {
 		timeouts.forEach(function(timeoutID) {
 			clearTimeout(timeoutID);
+		});
+		fns.forEach(function(fn) {
+			fn();
 		});
 	};
 

@@ -151,6 +151,7 @@ $.widget('iss.gestureAuthor', {
 	refreshGesture: function() {
 		var contents = this._getCurrentGesture();
 		try {
+			this.recordingDisplay.recordingDisplay('destroyPaths');
 			eval(contents);
 			this.recordingDisplay.recordingDisplay('option', 'name', this.option('currentGestureName'));
 		} catch(e) {

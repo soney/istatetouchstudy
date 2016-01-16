@@ -1,7 +1,7 @@
 registerBehavior("press and hold", "primitives", function(TouchCluster, Path, fire, begin, update, end) {
 
 var tc = new TouchCluster({
-    numFingers: 2
+    numFingers: 1
 });
 var path = new Path()
                     .moveTo(tc.getXConstraint(), 0)
