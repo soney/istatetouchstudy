@@ -4,7 +4,7 @@ var MAX_MOVEMENT = 50,
     MIN_MOVEMENT = 200, // double check what the "min movement" should be
     originalLocation,
     touchID,
-    swipeUpID,
+    validTouch,
     endingY;
     
 onTouchStart(function(event) { 				
@@ -15,12 +15,12 @@ onTouchStart(function(event) {
     };
     
     touchID = touch.identifier;
-    swipeUpID = true;
+    validTouch = true;
 });
 
 onTouchEnd(function(event) { 
     var touch = event.changedTouches[0];
-    if(swipeUpID && touch.identifier === touchID && distance(originalLocation.y, endingY) >= MIN_MOVEMENT) {
+    if(validTouch && touch.identifier === touchID && distance(originalLocation.y, endingY) >= MIN_MOVEMENT) {
         fire();
     }
 });
@@ -31,7 +31,7 @@ onTouchMove(function(event) {
         y = touch.clientY;
     endingY = y;
 	if(distance(x, originalLocation.x) > MAX_MOVEMENT) { 
-        swipeLeftID = false;
+        validTouch = false;
     }
 });
 

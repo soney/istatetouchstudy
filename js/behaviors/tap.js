@@ -1,19 +1,30 @@
 registerBehavior("tap", function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end) {
 
+var MAX_TIME_MILLISECONDS = 100,
+    validTouch = true,
+    MAX_MOVEMENT = 50,
+    touchID,
+    timeoutID,
+    originalLocation;
+
 onTouchStart(function(event) { 
     var touch = event.changedTouches[0]; 
     originalLocation = {
         x: touch.clientX,
         y: touch.clientY
     };
-    
+    validTouch = true;
+    timeoutID = setTimeout(function() { // start a timer
+        timeoutID = false;
+    }, MAX_TIME_MILLISECONDS);
     touchID = touch.identifier; // the unique identifier for the touch
-    tapID = true;
 });
 
 onTouchEnd(function(event) { 
     var touch = event.changedTouches[0];
-    if(tapID && touch.identifier === touchID) {
+    if(timeoutID && touch.identifier === touchID) {
+        //clearTimeout(timeoutID); // then cancel the firing timeout
+        timeoutID = false;
         fire();
     }
 });
@@ -23,8 +34,10 @@ onTouchMove(function(event) {
         x = touch.clientX,
         y = touch.clientY;
 
-    if(tapID && distance(x, originalLocation.x, y, originalLocation.y) > MAX_MOVEMENT) { 
-        tapID = false;
+    if(timeoutID && validTouch && distance(x, y, originalLocation.x, originalLocation.y) > MAX_MOVEMENT) { 
+        validTouch = false;
+        clearTimeout(timeoutID); // then cancel the firing timeout
+        timeoutID = false;
     }
 });
 
