@@ -14,7 +14,7 @@ $.widget('iss.gestureAuthor', {
 		primitivesFooterRegex: /\n\n}\);/,
 		primitivesAvailableMethods: ['TouchCluster', 'Path', 'fire', 'begin', 'update', 'end', 'setTimeout', 'clearTimeout'],
 
-		currentCondition: 'primitives',
+		currentCondition: 'control',
 		currentGestureName: false
 	},
 

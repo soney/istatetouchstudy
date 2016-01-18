@@ -6,7 +6,7 @@ var able = (function (root) {
 	"use strict";
 
 	//
-	// ============== UTILITY FUNCTIONS ============== 
+	// ============== UTILITY FUNCTIONS ==============
 	//
 	var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
 	var slice = ArrayProto.slice,
@@ -259,11 +259,11 @@ var able = (function (root) {
 	(function () {
 		var options_prop_name = "__options",
 			emit_fn_name = "_emit";
-		
+
 		able.make_this_optionable = function (instance) {
 			instance[options_prop_name] = extend.apply(this, [{}].concat(Array.prototype.slice.call(arguments, 1)));
 		};
-		
+
 		able.make_proto_optionable = function (proto) {
 			proto._get_option = function (key) {
 				var value = this[options_prop_name][key];
@@ -276,10 +276,10 @@ var able = (function (root) {
 			proto._set_option = function (key, value) {
 				this[options_prop_name][key] = value;
 			};
-		
+
 			proto._on_option_set = function (key, value) { };
 			proto._on_options_set = function (values) { };
-		
+
 			proto.option = function (key, value) {
 				var args;
 				if (arguments.length === 0) {
@@ -291,11 +291,11 @@ var able = (function (root) {
 						args = rest(arguments, 2);
 						this._set_option.apply(this, [key, value].concat(args));
 						this._on_option_set.apply(this, [key, value].concat(args));
-		
+
 						var keys_val = {};
 						keys_val[key] = value;
 						this._on_options_set.apply(this, [keys_val].concat(args));
-		
+
 						return this;
 					}
 				} else {

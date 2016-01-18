@@ -14,7 +14,7 @@ $.widget('iss.recordingDisplay', {
 		this.$onPathDestroyed = $.proxy(this._onPathDestroyed, this)
 
 		pathList.on('pathCreated', this.$onPathCreated);
-		pathList.on('pathDestroyed', this.$onPathDestroye);
+		pathList.on('pathDestroyed', this.$onPathDestroyed);
 		_.each(pathList.paths, function(path) {
 			this._onPathCreated(path);
 		}, this);
@@ -34,7 +34,7 @@ $.widget('iss.recordingDisplay', {
 	destroyPaths: function() {
 		_.each(this._currentPaths, function(path) {
 			//console.log('destroy', path);
-			//path.destroy();
+			path.destroy();
 		});
 		this._currentPaths = [];
 	},

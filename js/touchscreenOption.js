@@ -48,7 +48,7 @@ $.widget('iss.touchscreenOption', {
 		this.$onPathCreated = $.proxy(this._onPathCreated, this)
 		this.$onPathDestroyed = $.proxy(this._onPathDestroyed, this)
 		pathList.on('pathCreated', this.$onPathCreated);
-		pathList.on('pathDestroyed', this.$onPathDestroye);
+		pathList.on('pathDestroyed', this.$onPathDestroyed);
 		_.each(pathList.paths, function(path) {
 			this._onPathCreated(path);
 		}, this);
@@ -59,6 +59,7 @@ $.widget('iss.touchscreenOption', {
 	_onPathCreated: function(path) {
 		this.replayContainer.touchscreen_layer('addPath', path);
 	},
+
 	_onPathDestroyed: function(path) {
 		this.replayContainer.touchscreen_layer('removePath', path);
 	},
