@@ -4,11 +4,7 @@ var tc = new TouchCluster({
     numFingers: 1
 });
 var path = new Path()
-                    .moveTo(tc.getXConstraint(), 0)
+                    .moveTo(tc.getStartXConstraint(), 0)
                     .verticalLineTo(900);
-
-tc.on('satisfied', function() {
-  //  console.log(arguments);
-});
 
 });
