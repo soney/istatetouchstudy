@@ -4,7 +4,10 @@ var tc = new TouchCluster({
     numFingers: 1
 });
 var path = new Path()
-                    .moveTo(tc.getStartXConstraint(), 0)
+                    .moveTo(tc.getStartXConstraint().sub(300), 0)
                     .verticalLineTo(900);
+tc.on('cross', path, function() {
+   fire();
+});
 
 });

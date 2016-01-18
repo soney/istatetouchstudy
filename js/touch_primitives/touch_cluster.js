@@ -1,3 +1,4 @@
+(function() {
 /*
  * downInside
  * downOutside
@@ -478,8 +479,7 @@ var TouchCluster = function (options) {
 	var oldOn = proto.on,
 		oldOff = proto.off;
 
-	proto.on = function(eventType, arg2) {
-		oldOn.apply(this, arguments);
+	proto.on = function(eventType, arg2, arg3) {
 		if(eventType === 'cross') {
 			var path = arg2;
 			var crossEvent = new CrossEvent({
@@ -488,6 +488,12 @@ var TouchCluster = function (options) {
 			});
 
 			this.crossEvents.push(crossEvent);
+			crossEvent.on('cross', function(e) {
+				this._emit('cross', e);
+			}, this);
+			oldOn.apply(this, ([eventType]).concat(_.rest(arguments, 2)));
+		} else {
+			oldOn.apply(this, arguments);
 		}
 	};
 	proto.off = function(eventType, callback) {
@@ -757,3 +763,5 @@ var TouchCluster = function (options) {
 	};
 	proto.id = proto.sid = function() { return this._id; };
 }(TouchCluster));
+window.TouchCluster = TouchCluster;
+}());

@@ -14,8 +14,8 @@ $.widget('iss.gestureAuthor', {
 		primitivesFooterRegex: /\n\n}\);/,
 		primitivesAvailableMethods: ['TouchCluster', 'Path', 'fire', 'begin', 'update', 'end', 'setTimeout', 'clearTimeout'],
 
-		currentCondition: 'control',
-		currentGestureName: false
+		currentCondition: store.get('currentCondition') || 'control',
+		currentGestureName: store.get('currentGestureName') || false
 	},
 
 	_create: function() {
@@ -94,6 +94,7 @@ $.widget('iss.gestureAuthor', {
 	_setOption: function(key, value) {
 		var oldValue = this.option(key);
 		this._super(key, value);
+		store.set(key, value);
 	},
 
 	_openImplementation: function(implementation_name) {
@@ -151,9 +152,12 @@ $.widget('iss.gestureAuthor', {
 	refreshGesture: function() {
 		var contents = this._getCurrentGesture();
 		try {
+			var oldRecording = this.recordingDisplay.recordingDisplay('option', 'recording');
+			this.recordingDisplay.recordingDisplay('option', 'recording', false);
 			this.recordingDisplay.recordingDisplay('destroyPaths');
 			eval(contents);
 			this.recordingDisplay.recordingDisplay('option', 'name', this.option('currentGestureName'));
+			this.recordingDisplay.recordingDisplay('option', 'recording', oldRecording);
 		} catch(e) {
 			console.error(e.stack);
 		}
@@ -196,32 +200,36 @@ $.widget('iss.gestureAuthor', {
 
 	_updateGestureList: function() {
 		var behaviorsElement = $('#behaviors');
+		var currentGestureName = this.option('currentGestureName');
 		return getBehaviors(this.option('currentCondition')).then($.proxy(function(behaviors) {
 			behaviorsElement.children().remove();
 			behaviors.forEach(function(behavior) {
 				$('<option />', {
 					text: behavior.replace(/_/gi, ''),
 					attr: {
-						value: behavior
+						value: behavior,
+						selected: behavior === currentGestureName
 					}
 				}).appendTo(behaviorsElement);
 			});
-			return this._openGesture(behaviors[0]);
+			return this._openGesture(currentGestureName || behaviors[0]);
 		}, this));
 	},
 
 	_updateRecordingList: function() {
 		var recordingsElement = $('#recordings');
+		var currentGestureName = this.option('currentGestureName');
 		getRecordings().then($.proxy(function(recordings) {
 			recordings.forEach(function(recording) {
 				$('<option />', {
 					text: recording.replace(/_/gi, ''),
 					attr: {
-						value: recording
+						value: recording,
+						selected: recording === currentGestureName
 					}
 				}).appendTo(recordingsElement);
 			});
-			return this._openRecording(recordings[0]);
+			return this._openRecording(currentGestureName || recordings[0]);
 		}, this));
 	},
 

@@ -30,7 +30,7 @@ function CrossEvent(options) {
 	};
 
 	proto.onCross = function(event) {
-		this.fire('cross', event);
+		this._emit('cross', event);
 	};
 }(CrossEvent))
 /*
