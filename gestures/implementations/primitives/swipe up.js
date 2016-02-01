@@ -11,12 +11,20 @@ var validTouch = true;
 var timeoutID;
 var MIN_TIME_MILLISECONDS = 500;
 
-var rect = new Path().rect(gesture.getStartXConstraint().sub(50),   // create a rectangle rect
-                            gesture.getStartYConstraint().sub(175),
-                            width,
-                            height);
-
-gesture.downInside = rect;      // set rect as the starting area for the gesture
+var validArea = new Path().rect(gesture.getStartXConstraint().sub(50),
+                                gesture.getStartYConstraint().sub(675),
+                                width,
+                                height);
+                                
+var right = new Path().rect(gesture.getStartXConstraint().sub(100),
+                            gesture.getStartYConstraint().sub(400),
+                            50,
+                            400);
+                            
+var left = new Path().rect(gesture.getStartXConstraint().add(50),
+                            gesture.getStartYConstraint().sub(400),
+                            50,
+                            400);
 
 gesture.on('satisfied', function() {    // when the gesture begins,
    validTouch = true;                   // set the gesture as being valid
@@ -25,7 +33,15 @@ gesture.on('satisfied', function() {    // when the gesture begins,
     }, MIN_TIME_MILLISECONDS);
 });
 
-gesture.on('cross', rect, function() {  // when the gesture leaves rect,
+gesture.on('cross', right, function() {
+    validTouch = false;
+});
+
+gesture.on('cross', left, function() {
+    validTouch = false;
+})
+
+gesture.on('cross', validArea, function() {  // when the gesture leaves rect,
     if (validTouch) {                   // fire if the gesture is still valid
         fire();
     }

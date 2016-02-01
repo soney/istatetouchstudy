@@ -5,18 +5,26 @@ var gesture = new TouchCluster({
     greedy: true
 });
 
-var width = 500;
+var width = 250;
 var height = 100;
 var validGesture = true;
 var timeoutID;
 var MIN_TIME_MILLISECONDS = 500;
 
-var rect = new Path().rect(gesture.getStartXConstraint().sub(250), // create a rectangle
-                            gesture.getStartYConstraint().sub(50),
-                            width,
-                            height);
-                                
-gesture.downInside = rect;    // set rect as the starting area for the gesture
+var validArea = new Path().rect(gesture.getStartXConstraint().sub(500),
+                                gesture.getStartYConstraint().sub(50),
+                                width,
+                                height);
+
+var upper = new Path().rect(gesture.getStartXConstraint().sub(500),
+                            gesture.getStartYConstraint().sub(100),
+                            500,
+                            50);
+                            
+var lower = new Path().rect(gesture.getStartXConstraint().sub(500),
+                            gesture.getStartYConstraint().add(50),
+                            500,
+                            50);
 
 gesture.on('satisfied', function() {    // when the gesture begins,
    validGesture = true;                 // set the gesture as valid
@@ -25,7 +33,15 @@ gesture.on('satisfied', function() {    // when the gesture begins,
     }, MIN_TIME_MILLISECONDS);
 });
 
-gesture.on('cross', rect, function() {  // when the gesture leaves rect,
+gesture.on('cross', upper, function() {
+    validGesture = false;
+});
+
+gesture.on('cross', lower, function() {
+    validGesture = false;
+})
+
+gesture.on('cross', validArea, function() {  // when the gesture leaves rect,
     if (validGesture) {                 // fire if the gesture is still valid
         fire();
     }
