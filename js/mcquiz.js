@@ -1,7 +1,7 @@
 var SAVEKEY = 'istatetouchstudy';
 
 function loadQuestion(behaviors, serializedQuestion) {
-	var question = getQuestion(behaviors, serializedQuestion.behaviorName, false);
+	var question = getQuestion(behaviors, serializedQuestion.implementation, serializedQuestion.behaviorName, false);
 	var rv = _.extend({},
 		serializedQuestion,
 		question, {
@@ -19,8 +19,8 @@ function loadOption(serializedOption) {
 	return getOption(serializedOption.behaviorName, serializedOption.correct);
 }
 
-function getQuestion(behaviors, behaviorName, numResponseOptions) {
-	var codePromise = getBehaviorCode(behaviorName),
+function getQuestion(behaviors, implementation, behaviorName, numResponseOptions) {
+	var codePromise = getBehaviorCode(behaviorName, implementation),
 		responseOptions;
 
 	if(numResponseOptions && numResponseOptions > 0) {
@@ -38,11 +38,14 @@ function getQuestion(behaviors, behaviorName, numResponseOptions) {
 	return {
 		serialize: function() {
 			var rv = _.extend({}, this, {
+				implementation: implementation,
 				behaviorName: behaviorName,
 				responseOptions: _.map(this.responseOptions, function(ro) {
 					return ro.serialize();
-				}),
+				})
 			});
+			delete rv.serialize;
+
 			if(rv.selectedOption) {
 				rv.selectedOption = rv.selectedOption.serialize();
 			}
@@ -92,7 +95,9 @@ $.widget('iss.mcquiz', {
 	options: {
 		numResponseOptions: 4,
 		numQuestions: 2,
-		currentQuestion: 1
+		currentQuestion: 1,
+		implementation: 'primitives',
+		uid: guid()
 	},
 	_create: function() {
 		this.container = $('<div />')	.addClass('container')
@@ -114,7 +119,6 @@ $.widget('iss.mcquiz', {
 												.appendTo(this.element)
 												.on('answered', $.proxy(this._onQuestionAnswered, this));
 
-
 		var loadedValue = this._load();
 		if(loadedValue && loadedValue.currentQuestion <= loadedValue.numQuestions) {
 			this._questions = loadedValue.questions;
@@ -135,7 +139,7 @@ $.widget('iss.mcquiz', {
 						answered: false
 					})
 				})
-				this._uid = guid();
+				this._uid = this.option('uid');
 				this._started = (new Date()).getTime();
 
 				this._updateProgressBar();
@@ -143,7 +147,7 @@ $.widget('iss.mcquiz', {
 			}, this));
 		}
 
-		//$(window).on('beforeunload', $.proxy(this._onBeforeUnload, this));
+		$(window).on('beforeunload', $.proxy(this._onBeforeUnload, this));
 	},
 
 	_destroy: function() {
@@ -151,12 +155,13 @@ $.widget('iss.mcquiz', {
 	},
 
 	_generateQuestions: function() {
+		var implementation = this.option('implementation');
 		return getBehaviors().then($.proxy(function(behaviors) {
 			var numResponseOptions = this.option('numResponseOptions'),
 				behaviorList = shuffleUntil(behaviors, this.option('numQuestions'));
 
 			var questions = _.map(behaviorList, function(behaviorName) {
-				return getQuestion(behaviors, behaviorName, numResponseOptions);
+				return getQuestion(behaviors, implementation, behaviorName, numResponseOptions);
 			});
 
 			return questions;
@@ -258,7 +263,6 @@ $.widget('iss.mcquiz', {
 
 	_updateCurrentQuestion: function() {
 		var currentQuestion = this._questions[this.option('currentQuestion')-1];
-		console.log(this._questions);
 		var questionElement = Promise.resolve(currentQuestion.getElement());
 		var responseOptionElements = _.map(currentQuestion.responseOptions, function(responseOption) {
 			return Promise.resolve(responseOption.getElement());
@@ -308,8 +312,8 @@ $.widget('iss.mcquiz', {
 	_transmitResults: function() {
 		var results = this._serialize();
 
-		//var myFirebaseRef = new Firebase('https://scorching-fire-1153.firebaseio.com/');
-		//myFirebaseRef.child(results.uid).set(results);
+		var myFirebaseRef = new Firebase('https://istatetouchstudy.firebaseio.com/');
+		myFirebaseRef.child('study_results').child(results.uid).push(results);
 
 		this._removeSaved();
 	}
@@ -323,8 +327,8 @@ function guid() {
 			.substring(1);
 	}
 
-	return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-			s4() + '-' + s4() + s4() + s4();
+	return s4() + s4() + '_' + s4() + '_' + s4() + '_' +
+			s4() + '_' + s4() + s4() + s4();
 }
 
 function shuffle(array) {

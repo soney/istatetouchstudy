@@ -83,7 +83,6 @@ $.widget('iss.touchscreenOption', {
 		this.$onGestureStart = _.bind(this._onGestureStart, this, this._currentReplayID);
 		this.$onGestureUpdate = _.bind(this._onGestureUpdate, this, this._currentReplayID);
 		this.$onGestureStop = _.bind(this._onGestureStop, this, this._currentReplayID);
-
 	},
 
 	_setOption: function(key, value) {
