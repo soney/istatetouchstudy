@@ -489,9 +489,10 @@ var TouchCluster = function (options) {
 
 			this.crossEvents.push(crossEvent);
 			crossEvent.on('cross', function(e) {
-				this._emit('cross', e);
+				//this._emit('cross', e);
+				arg3(e);
 			}, this);
-			oldOn.apply(this, ([eventType]).concat(_.rest(arguments, 2)));
+			//oldOn.apply(this, ([eventType]).concat(_.rest(arguments, 2)));
 		} else {
 			oldOn.apply(this, arguments);
 		}

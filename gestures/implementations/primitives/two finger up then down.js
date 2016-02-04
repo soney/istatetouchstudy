@@ -16,25 +16,21 @@ var crossedUpper = false;
 var crossedRight = false;
 var crossedLeft = false;
 
-var lower = new Path().rect(gesture.getStartXConstraint().sub(90),
-                            gesture.getStartYConstraint().sub(40),//gesture.getStartYConstraint().sub(radius),
-                            width,
-                            height);
+var lower = new Path().moveTo(gesture.getStartXConstraint().sub(90),
+                            gesture.getStartYConstraint().sub(40))
+                      .horizontalLineTo(gesture.getStartXConstraint().add(90));
 
-var upper = new Path().rect(gesture.getStartXConstraint().sub(90),
-                            gesture.getStartYConstraint().sub(180),
-                            width,
-                            height);
+var upper = new Path().moveTo(gesture.getStartXConstraint().sub(90),
+                            gesture.getStartYConstraint().sub(180))
+                      .horizontalLineTo(gesture.getStartXConstraint().add(90));
 
-var right = new Path().rect(gesture.getStartXConstraint().add(90),
-                            gesture.getStartYConstraint().sub(250),
-                            10,
-                            400);
+var right = new Path().moveTo(gesture.getStartXConstraint().add(90),
+                            gesture.getStartYConstraint().sub(180))
+                        .verticalLineTo(gesture.getStartYConstraint().add(40));
 
-var left = new Path().rect(gesture.getStartXConstraint().sub(100),
-                            gesture.getStartYConstraint().sub(250),
-                            10,
-                            400);
+var left = new Path().moveTo(gesture.getStartXConstraint().sub(90),
+                            gesture.getStartYConstraint().sub(180))
+                        .verticalLineTo(gesture.getStartYConstraint().add(40));
 
 gesture.downInside = lower;
 
@@ -52,17 +48,21 @@ gesture.on('satisfied', function() {    // when the gesture begins,
 
 gesture.on('cross', upper, function() {  // when the gesture leaves rect,
     crossedUpper = true;
+    console.log('crossed upper');
 });
 
 gesture.on('cross', right, function() {
     crossedRight = true;
+    console.log('crossed right');
 });
 
 gesture.on('cross', left, function() {
     crossedLeft = true;
+    console.log('crossed left');
 });
 
 gesture.on('cross', lower, function() {
+    console.log('crossed lower');
     if (crossedUpper && !crossedRight && !crossedLeft && validTouch) {
         fire();
     }
