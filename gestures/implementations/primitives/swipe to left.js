@@ -11,20 +11,21 @@ var validGesture = true;
 var timeoutID;
 var MIN_TIME_MILLISECONDS = 500;
 
-var validArea = new Path().rect(gesture.getStartXConstraint().sub(500),
-                                gesture.getStartYConstraint().sub(50),
-                                width,
-                                height);
+var left = new Path().moveTo(gesture.getStartXConstraint().sub(250),
+                                gesture.getStartYConstraint().sub(50))
+                                .verticalLineTo(gesture.getStartYConstraint().add(50));
 
-var upper = new Path().rect(gesture.getStartXConstraint().sub(500),
-                            gesture.getStartYConstraint().sub(100),
-                            500,
-                            50);
+var upper = new Path().moveTo(gesture.getStartXConstraint().sub(250),
+                            gesture.getStartYConstraint().sub(50))
+                            .horizontalLineTo(gesture.getStartXConstraint().add(20));
                             
-var lower = new Path().rect(gesture.getStartXConstraint().sub(500),
-                            gesture.getStartYConstraint().add(50),
-                            500,
-                            50);
+var lower = new Path().moveTo(gesture.getStartXConstraint().sub(250),
+                            gesture.getStartYConstraint().add(50))
+                            .horizontalLineTo(gesture.getStartXConstraint().add(20));
+
+var right = new Path().moveTo(gesture.getStartXConstraint().add(20),
+                            gesture.getStartYConstraint().sub(50))
+                            .verticalLineTo(gesture.getStartYConstraint().add(50));
 
 gesture.on('satisfied', function() {    // when the gesture begins,
    validGesture = true;                 // set the gesture as valid
@@ -39,9 +40,13 @@ gesture.on('cross', upper, function() {
 
 gesture.on('cross', lower, function() {
     validGesture = false;
-})
+});
 
-gesture.on('cross', validArea, function() {  // when the gesture leaves rect,
+gesture.on('cross', right, function() {
+    validGesture = false;
+});
+
+gesture.on('cross', left, function() {  // when the gesture leaves rect,
     if (validGesture) {                 // fire if the gesture is still valid
         fire();
     }

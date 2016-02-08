@@ -8,28 +8,28 @@ var gesture = new TouchCluster({
 
 var validTouch = true;
 var timeoutID;
-var MIN_TIME_MILLISECONDS = 500;
+var MIN_TIME_MILLISECONDS = 750;
 var radius = gesture.getRadiusConstraint();
-var width = 180;
+var width = 200;
 var height = 80;
 var crossedUpper = false;
 var crossedRight = false;
 var crossedLeft = false;
 
-var lower = new Path().moveTo(gesture.getStartXConstraint().sub(90),
+var lower = new Path().moveTo(gesture.getStartXConstraint().sub(100),
                             gesture.getStartYConstraint().sub(40))
-                      .horizontalLineTo(gesture.getStartXConstraint().add(90));
+                      .horizontalLineTo(gesture.getStartXConstraint().add(100));
 
-var upper = new Path().moveTo(gesture.getStartXConstraint().sub(90),
-                            gesture.getStartYConstraint().sub(180))
-                      .horizontalLineTo(gesture.getStartXConstraint().add(90));
+var upper = new Path().moveTo(gesture.getStartXConstraint().sub(100),
+                            gesture.getStartYConstraint().sub(120))
+                      .horizontalLineTo(gesture.getStartXConstraint().add(100));
 
-var right = new Path().moveTo(gesture.getStartXConstraint().add(90),
-                            gesture.getStartYConstraint().sub(180))
+var right = new Path().moveTo(gesture.getStartXConstraint().add(100),
+                            gesture.getStartYConstraint().sub(120))
                         .verticalLineTo(gesture.getStartYConstraint().add(40));
 
-var left = new Path().moveTo(gesture.getStartXConstraint().sub(90),
-                            gesture.getStartYConstraint().sub(180))
+var left = new Path().moveTo(gesture.getStartXConstraint().sub(100),
+                            gesture.getStartYConstraint().sub(120))
                         .verticalLineTo(gesture.getStartYConstraint().add(40));
 
 gesture.downInside = lower;

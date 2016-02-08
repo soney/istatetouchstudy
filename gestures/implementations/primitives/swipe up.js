@@ -5,26 +5,25 @@ var gesture = new TouchCluster({
     greedy: true
 });
 
-var width = 100;
-var height = 500;
 var validTouch = true;
 var timeoutID;
 var MIN_TIME_MILLISECONDS = 500;
 
-var validArea = new Path().rect(gesture.getStartXConstraint().sub(50),
-                                gesture.getStartYConstraint().sub(675),
-                                width,
-                                height);
+var upper = new Path().moveTo(gesture.getStartXConstraint().sub(40),
+                                gesture.getStartYConstraint().sub(175))
+                            .horizontalLineTo(gesture.getStartXConstraint().add(40));
                                 
-var right = new Path().rect(gesture.getStartXConstraint().sub(100),
-                            gesture.getStartYConstraint().sub(400),
-                            50,
-                            400);
+var left = new Path().moveTo(gesture.getStartXConstraint().sub(40),
+                            gesture.getStartYConstraint().sub(175))
+                            .verticalLineTo(gesture.getStartYConstraint().add(20));
                             
-var left = new Path().rect(gesture.getStartXConstraint().add(50),
-                            gesture.getStartYConstraint().sub(400),
-                            50,
-                            400);
+var right = new Path().moveTo(gesture.getStartXConstraint().add(40),
+                            gesture.getStartYConstraint().sub(175))
+                            .verticalLineTo(gesture.getStartYConstraint().add(20));
+
+var lower = new Path().moveTo(gesture.getStartXConstraint().sub(40),
+                            gesture.getStartYConstraint().add(20))
+                            .horizontalLineTo(gesture.getStartXConstraint().add(40));
 
 gesture.on('satisfied', function() {    // when the gesture begins,
    validTouch = true;                   // set the gesture as being valid
@@ -39,9 +38,13 @@ gesture.on('cross', right, function() {
 
 gesture.on('cross', left, function() {
     validTouch = false;
-})
+});
 
-gesture.on('cross', validArea, function() {  // when the gesture leaves rect,
+gesture.on('cross', lower, function() {
+    validTouch = false;
+});
+
+gesture.on('cross', upper, function() {  // when the gesture leaves rect,
     if (validTouch) {                   // fire if the gesture is still valid
         fire();
     }
