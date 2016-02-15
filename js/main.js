@@ -1,9 +1,11 @@
 $(function() {
 	var implementation = getUrlParameter('implementation') || 'control',
+		numQuestions = getUrlParameter('numQuestions') || 4,
 		uid = getUrlParameter('id') || guid();
-		
+
 	$('body').mcquiz({
 		implementation: implementation,
+		numQuestions: numQuestions,
 		uid: uid
 	});
 
