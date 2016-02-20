@@ -1,42 +1,40 @@
 registerBehavior("press and hold", "control", function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end) {
 
-var MIN_TIME_MILLISECONDS = 1000, // wait 1000 milliseconds
-    MAX_MOVEMENT = 50, // make sure the finger doesnt move more than
-                        //50 pixes from the original spot
+var MIN_TIME_MILLISECONDS = 1000, 
+    MAX_MOVEMENT = 50,
     originalLocation,
     touchID,
     timeoutID;
 
-onTouchStart(function(event) { // when the user presses a finger down...
-    var touch = event.changedTouches[0]; // event.changedTouches is all of the 
-                                    // touch information affected by this event
+onTouchStart(function(event) {
+    var touch = event.changedTouches[0];
     originalLocation = {
-        x: touch.clientX, // clientX is the x location of the touch
-        y: touch.clientY // clientY is the y location
+        x: touch.clientX,
+        y: touch.clientY 
     };
     
-    touchID = touch.identifier; // the unique identifier for the touch
-    timeoutID = setTimeout(function() { // start a timer
+    touchID = touch.identifier;
+    timeoutID = setTimeout(function() {
         timeoutID = false;
-        fire();                         // to fire the event
+        fire();       
     }, MIN_TIME_MILLISECONDS);
 });
 
-onTouchEnd(function(event) { // if the user releases the touch before the timeout...
+onTouchEnd(function(event) { 
     var touch = event.changedTouches[0];
     if(timeoutID && touch.identifier === touchID) {
-        clearTimeout(timeoutID); // then cancel the firing timeout
+        clearTimeout(timeoutID);
         timeoutID = false;
     }
 });
 
-onTouchMove(function(event) { // check if the finger moves too far to be a press+hold
+onTouchMove(function(event) {
     var touch = event.changedTouches[0],
         x = touch.clientX,
         y = touch.clientY;
 
-    if(timeoutID && distance(x, originalLocation.x, y, originalLocation.y) > MAX_MOVEMENT) { // we're waiting for a hold event
-        clearTimeout(timeoutID); // then cancel the firing timeout
+    if(timeoutID && distance(x, originalLocation.x, y, originalLocation.y) > MAX_MOVEMENT) {
+        clearTimeout(timeoutID); 
         timeoutID = false;
     }
 });

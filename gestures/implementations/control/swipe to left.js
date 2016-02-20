@@ -1,7 +1,7 @@
 registerBehavior("swipe to left", "control", function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end) {
 
 var MAX_MOVEMENT = 50,
-    MIN_MOVEMENT = 200, // double check what the "min movement" should be
+    MIN_MOVEMENT = 200,
     originalLocation,
     touchID,
     validTouch,

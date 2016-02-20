@@ -14,16 +14,15 @@ onTouchStart(function(event) {
         y: touch.clientY
     };
     validTouch = true;
-    timeoutID = setTimeout(function() { // start a timer
+    timeoutID = setTimeout(function() { 
         timeoutID = false;
     }, MAX_TIME_MILLISECONDS);
-    touchID = touch.identifier; // the unique identifier for the touch
+    touchID = touch.identifier;
 });
 
 onTouchEnd(function(event) {
     var touch = event.changedTouches[0];
     if(timeoutID && touch.identifier === touchID) {
-        //clearTimeout(timeoutID); // then cancel the firing timeout
         timeoutID = false;
         fire();
     }
@@ -36,7 +35,7 @@ onTouchMove(function(event) {
 
     if(timeoutID && validTouch && distance(x, y, originalLocation.x, originalLocation.y) > MAX_MOVEMENT) {
         validTouch = false;
-        clearTimeout(timeoutID); // then cancel the firing timeout
+        clearTimeout(timeoutID);
         timeoutID = false;
     }
 });

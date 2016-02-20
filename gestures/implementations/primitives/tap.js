@@ -11,26 +11,26 @@ var validTouch = true;
 var timeoutID;
 
 
-var circle = new Path().circle(touch.getStartXConstraint(), // create a circle
+var circle = new Path().circle(touch.getStartXConstraint(),
                                 touch.getStartYConstraint(),
                                 radius);
                                 
-touch.downInside = circle;  // set circle as the starting area for the touch
+touch.downInside = circle;
 
-touch.on('satisfied', function() {      // whe the touch begins,
-    validTouch = true;                  // set the touch as being valid
-    timeoutID = setTimeout(function() { // start a timer
-        validTouch = false;             // if touch takes too long, it's no longer valid
+touch.on('satisfied', function() {
+    validTouch = true; 
+    timeoutID = setTimeout(function() { 
+        validTouch = false;  
     }, MIN_TIME_MILLISECONDS);
 });
 
-touch.on('cross', circle, function() {  // if touch leaves the circle,
-    validTouch = false;                 // it's no longer valid
+touch.on('cross', circle, function() {  
+    validTouch = false;  
 });
 
 touch.on('unsatisfied', function() {
-    if (validTouch) {                   // if touch is still valid,
-        fire();                         // then fire
+    if (validTouch) { 
+        fire();   
     }
 });
 

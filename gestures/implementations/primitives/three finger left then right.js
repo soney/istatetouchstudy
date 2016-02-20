@@ -32,19 +32,19 @@ var lower = new Path().moveTo(gesture.getStartXConstraint().sub(180),
 
 //gesture.downInside = right;
 
-gesture.on('satisfied', function() {    // when the gesture begins,
-   validTouch = true;                   // set the gesture as being valid
+gesture.on('satisfied', function() {  
+   validTouch = true;   
    crossedUpper = false;
    crossedLower = false;
    crossedLeft = false;
-   timeoutID = setTimeout(function() {  // set a timer for the gesture
-        validTouch = false;             // if gesture takes too long, it's no longer valid
+   timeoutID = setTimeout(function() {
+        validTouch = false;      
     }, MIN_TIME_MILLISECONDS);
 });
 
 
 
-gesture.on('cross', left, function() {  // when the gesture leaves rect,
+gesture.on('cross', left, function() {  
     crossedLeft = true;
 });
 

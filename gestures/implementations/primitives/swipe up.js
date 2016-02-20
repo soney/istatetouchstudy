@@ -25,10 +25,10 @@ var lower = new Path().moveTo(gesture.getStartXConstraint().sub(40),
                             gesture.getStartYConstraint().add(20))
                             .horizontalLineTo(gesture.getStartXConstraint().add(40));
 
-gesture.on('satisfied', function() {    // when the gesture begins,
-   validTouch = true;                   // set the gesture as being valid
-   timeoutID = setTimeout(function() {  // set a timer for the gesture
-        validTouch = false;             // if gesture takes too long, it's no longer valid
+gesture.on('satisfied', function() { 
+   validTouch = true;           
+   timeoutID = setTimeout(function() { 
+        validTouch = false;         
     }, MIN_TIME_MILLISECONDS);
 });
 
@@ -44,8 +44,8 @@ gesture.on('cross', lower, function() {
     validTouch = false;
 });
 
-gesture.on('cross', upper, function() {  // when the gesture leaves rect,
-    if (validTouch) {                   // fire if the gesture is still valid
+gesture.on('cross', upper, function() {
+    if (validTouch) {     
         fire();
     }
 });

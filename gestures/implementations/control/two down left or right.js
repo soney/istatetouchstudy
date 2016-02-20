@@ -5,8 +5,8 @@ var MIN_TIME_MILLISECONDS = 1000,
     originalLocation,
     touchID,
     validTouch = true;
-var ongoingTouches = new Array(); // an array of all the touches
-var originalLocations = new Array(); // an array of all the touches' locations
+var ongoingTouches = new Array();
+var originalLocations = new Array();
 
 onTouchStart(function(event) {
     for (var i = 0; i < event.changedTouches.length; i++) {
@@ -23,13 +23,11 @@ onTouchStart(function(event) {
 });
 
 onTouchEnd(function(event) {
-    if(validTouch && event.targetTouches.length === 3) { // ensures only 3 touches present
+    if(validTouch && event.targetTouches.length === 3) {
         for (var i = 0; i < event.targetTouches.length; i++) {
-            // if left
             if (event.changedTouches[0].clientX < event.targetTouches[i].clientX) {
                 fire();
             }
-            // if right
             if (event.changedTouches[0].clientY < event.targetTouches[i].clientX) {
                 fire();
             }
@@ -43,7 +41,7 @@ onTouchMove(function(event) {
         var x = ongoingTouches[j].clientX;
         var y = ongoingTouches[j].clientY;
         if (validTouch && distance(x, y, originalLocations[j].x, originalLocations[j].y) > MAX_MOVEMENT) {
-            validTouch = false; // at least one of the touches moved too much
+            validTouch = false;
         }
     }
 });

@@ -6,8 +6,8 @@ var MIN_TIME_MILLISECONDS = 1000,
     touchID,
     validTouch = true,
     movingRight = false;
-var ongoingTouches = new Array(); // an array of all the touches
-var originalLocations = new Array(); // an array of all the touches' locations
+var ongoingTouches = new Array(); 
+var originalLocations = new Array();
 var lastLocations = new Array();
 
 onTouchStart(function(event) {
@@ -29,9 +29,8 @@ onTouchStart(function(event) {
 });
 
 onTouchEnd(function(event) {
-    if(validTouch && event.targetTouches.length === 3) { // ensures only 3 touches present
+    if(validTouch && event.targetTouches.length === 3) {
         for (var i = 0; i < event.targetTouches.length; i++) {
-            // make sure it's ending roughly where it started (or past)
             var x = ongoingTouches[i].clientX;
             var y = ongoingTouches[i].clientY;
             if (x <= originalLocations[i].x) {
@@ -49,7 +48,7 @@ onTouchMove(function(event) {
         var x = ongoingTouches[j].clientX;
         var y = ongoingTouches[j].clientY;
         if (validTouch && distance(y, originalLocations[j].y) > MAX_MOVEMENT) {
-            validTouch = false; // at least one of the touches moved too much
+            validTouch = false;
         }
         if (movingRight === false) {
             if (lastLocations[j].x < x) {
