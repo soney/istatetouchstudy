@@ -33,7 +33,7 @@ onTouchMove(function(event) {
         x = touch.clientX,
         y = touch.clientY;
 
-    if(timeoutID && distance(x, originalLocation.x, y, originalLocation.y) > MAX_MOVEMENT) {
+    if(timeoutID && distance(x, y, originalLocation.x, originalLocation.y) > MAX_MOVEMENT) {
         clearTimeout(timeoutID); 
         timeoutID = false;
     }

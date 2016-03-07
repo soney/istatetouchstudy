@@ -1,47 +1,66 @@
-registerBehavior("tap", "control", function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end) {
+registerBehavior("two finger press hold to increment", "control", function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end) {
 
-var MAX_TIME_MILLISECONDS = 100,
+var MAX_TIME_MILLISECONDS = 20,
     validTouch = true,
     MAX_MOVEMENT = 50,
-    touchID,
-    timeoutID,
-    originalLocation;
+    ongoingTouches = new Array(),
+    originalLocations = new Array();
 
 onTouchStart(function(event) {
-    var touch = event.changedTouches[0];
-    originalLocation = {
-        x: touch.clientX,
-        y: touch.clientY
-    };
+    for (var i = 0; i < event.changedTouches.length; i++) {
+        var touch = event.changedTouches[i];
+        ongoingTouches.push(touch.identifier);
+        originalLocation = {
+            x: touch.clientX,
+            y: touch.clientY
+        };
+        originalLocations.push(originalLocation);
+    }
     validTouch = true;
-    timeoutID = setTimeout(function() { 
-        timeoutID = false;
-    }, MAX_TIME_MILLISECONDS);
-    touchID = touch.identifier;
+    recursiveSetTimeout();
 });
 
 onTouchEnd(function(event) {
-    var touch = event.changedTouches[0];
-    if(timeoutID && touch.identifier === touchID) {
-        timeoutID = false;
-        fire();
-    }
+    validTouch = false;
 });
 
 onTouchMove(function(event) {
-    var touch = event.changedTouches[0],
-        x = touch.clientX,
-        y = touch.clientY;
-
-    if(timeoutID && validTouch && distance(x, y, originalLocation.x, originalLocation.y) > MAX_MOVEMENT) {
-        validTouch = false;
-        clearTimeout(timeoutID);
-        timeoutID = false;
+    for (var i = 0; i < event.changedTouches.length; i++) {
+        var touch = event.changedTouches[i],
+            x = touch.clientX,
+            y = touch.clientY;
+        for (var j = 0; j < 2; j++) {
+            if (touch.identifier === ongoingTouches[j]) {
+                if(distance(x, y, originalLocations[j].x, originalLocations[j].y) > MAX_MOVEMENT) {
+                    validTouch = false;
+                }
+            }
+        }
     }
 });
 
 function distance(x1, y1, x2, y2) {
     return Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2));
 }
+
+function recursiveSetTimeout() {
+    setTimeout(function() {
+        if (validTouch) {
+            fire();
+            recursiveSetTimeout();
+            return;
+        }
+        else {
+            return;
+        }
+    }, 20);
+}
+
+
+
+
+
+
+
 
 });

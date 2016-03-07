@@ -1,4 +1,4 @@
-registerBehavior("tap", "primitives", function(TouchCluster, Path, fire, begin, update, end) {
+registerBehavior("press hold to increment", "primitives", function(TouchCluster, Path, fire, begin, update, end) {
 
 var touch = new TouchCluster({
     numFingers: 1,
@@ -19,9 +19,7 @@ touch.downInside = circle;
 
 touch.on('satisfied', function() {
     validTouch = true; 
-    timeoutID = setTimeout(function() { 
-        validTouch = false;  
-    }, MIN_TIME_MILLISECONDS);
+    recursiveSetTimeout();
 });
 
 touch.on('cross', circle, function() {  
@@ -29,9 +27,20 @@ touch.on('cross', circle, function() {
 });
 
 touch.on('unsatisfied', function() {
-    if (validTouch) { 
-        fire();   
-    }
+    validTouch = false;
 });
+
+function recursiveSetTimeout() {
+    setTimeout(function() {
+        if (validTouch) {
+            fire();
+            recursiveSetTimeout();
+            return;
+        }
+        else {
+            return;
+        }
+    }, 20);
+}
 
 });
