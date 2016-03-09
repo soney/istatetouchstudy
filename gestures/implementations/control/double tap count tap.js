@@ -1,47 +1,55 @@
-registerBehavior("tap", "control", function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end) {
+registerBehavior("double tap count tap", "control", function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end) {
 
-var MAX_TIME_MILLISECONDS = 100,
+var MAX_TIME_MILLISECONDS = 200,
     validTouch = true,
-    MAX_MOVEMENT = 50,
-    touchID,
     timeoutID,
-    originalLocation;
+    count = 0;
 
 onTouchStart(function(event) {
-    var touch = event.changedTouches[0];
-    originalLocation = {
-        x: touch.clientX,
-        y: touch.clientY
-    };
     validTouch = true;
-    timeoutID = setTimeout(function() { 
-        timeoutID = false;
-    }, MAX_TIME_MILLISECONDS);
-    touchID = touch.identifier;
+    count++;
+    if (count === 2) { //how much leeway is there for
+            //double taps? should I account for taking a little bit of time
+            //between the first and second tap?
+        doubleTap = true;
+        if (validTouch === true) {
+            clearTimeout(timeoutID);
+            recursiveSetTimeout();
+        }
+    }
+    
+    if (count === 1) {
+        timeoutID = setTimeout(function() {
+            validTouch = false;
+        }, MAX_TIME_MILLISECONDS);
+    }
+    if (count === 3) {
+        count = 0;
+        validTouch = false;
+    }
 });
 
 onTouchEnd(function(event) {
-    var touch = event.changedTouches[0];
-    if(timeoutID && touch.identifier === touchID) {
-        timeoutID = false;
-        fire();
-    }
-});
-
-onTouchMove(function(event) {
-    var touch = event.changedTouches[0],
-        x = touch.clientX,
-        y = touch.clientY;
-
-    if(timeoutID && validTouch && distance(x, y, originalLocation.x, originalLocation.y) > MAX_MOVEMENT) {
-        validTouch = false;
+    if (count === 2) {
         clearTimeout(timeoutID);
-        timeoutID = false;
+        recursiveSetTimeout();
+    }
+    if (count === 1 || count === 3) {
+        validTouch = false;
     }
 });
 
-function distance(x1, y1, x2, y2) {
-    return Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2));
+function recursiveSetTimeout() {
+    setTimeout(function() {
+        if (validTouch) {
+            fire();
+            recursiveSetTimeout();
+            return;
+        }
+        else {
+            return;
+        }
+    }, 20);
 }
 
 });
