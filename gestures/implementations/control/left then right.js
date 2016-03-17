@@ -1,47 +1,56 @@
-registerBehavior("tap", "control", function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end) {
+registerBehavior("left then right", "control", function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end) {
 
-var MAX_TIME_MILLISECONDS = 100,
-    validTouch = true,
-    MAX_MOVEMENT = 50,
+var MIN_TIME_MILLISECONDS = 1000,
+    MAX_MOVEMENT = 100,
     touchID,
-    timeoutID,
-    originalLocation;
+    validTouch = true,
+    movingRight = false;
+var originalLocation;
+var lastLocation;
 
 onTouchStart(function(event) {
     var touch = event.changedTouches[0];
+    touchID = touch;
     originalLocation = {
         x: touch.clientX,
         y: touch.clientY
     };
+    lastLocation = originalLocation;
     validTouch = true;
-    timeoutID = setTimeout(function() { 
-        timeoutID = false;
-    }, MAX_TIME_MILLISECONDS);
-    touchID = touch.identifier;
+    movingRight = false;
 });
 
 onTouchEnd(function(event) {
     var touch = event.changedTouches[0];
-    if(timeoutID && touch.identifier === touchID) {
-        timeoutID = false;
-        fire();
+    if(validTouch && event.targetTouches.length === 1) {
+        if (movingRight) {
+            fire();
+        }
     }
 });
 
 onTouchMove(function(event) {
-    var touch = event.changedTouches[0],
+        var touch = event.changedTouches[0],
         x = touch.clientX,
         y = touch.clientY;
-
-    if(timeoutID && validTouch && distance(x, y, originalLocation.x, originalLocation.y) > MAX_MOVEMENT) {
-        validTouch = false;
-        clearTimeout(timeoutID);
-        timeoutID = false;
-    }
+        if (validTouch && distance(y, originalLocation.y) > MAX_MOVEMENT) {
+            validTouch = false;
+        }
+        if (movingRight === false) {
+            if (lastLocation.x < x) {
+                movingRight = true;
+            }
+        }
+        else if (movingRight === true) {
+            if (lastLocation.x > (x + 20)) {
+                validTouch = false;
+            }
+        }
+        lastLocation.x = x;
 });
 
-function distance(x1, y1, x2, y2) {
-    return Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2));
+function distance(x1, x2) {
+    return Math.sqrt(Math.pow(x1-x2, 2));
 }
 
 });
