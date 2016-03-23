@@ -339,6 +339,17 @@ var TouchCluster = function (options) {
 
 	this._id = tc_id++;
 
+	this.$startForce = cjs(0);
+	this.$force = cjs(function() {
+		var touchLocations = this.$usingTouchInfo.get();
+		if(touchLocations.length > 0) {
+			return average(_.pluck(touchLocations, 'force'));
+		} else {
+			return 0;
+		}
+	}, {context: this});
+	this.$endForce = cjs(0);
+
 	this.$usableFingers = cjs([]);
 	this.$usingFingers = cjs([]);
 	this.$satisfied = cjs(false);
@@ -533,6 +544,10 @@ var TouchCluster = function (options) {
 		this.$startYConstraint.destroy(true);
 		this.$endXConstraint.destroy(true);
 		this.$endYConstraint.destroy(true);
+
+		this.$force.destroy(true);
+		this.$startForce.destroy(true);
+		this.$endForce.destroy(true);
 	};
 
 	proto.isGreedy = function() { return this.options.greedy; };
@@ -545,6 +560,7 @@ var TouchCluster = function (options) {
 		this.$endRadius.set(this.$radius.get());
 		this.$endRotation.set(this.$rotation.get());
 		this.$endScale.set(this.$scale.get());
+		this.$endForce.set(this.$force.get());
 	};
 	proto.postUnsatisfied = function() {
 		cjs.wait();
@@ -591,6 +607,9 @@ var TouchCluster = function (options) {
 			this.$startCenter.set({ x: false, y: false });
 		}
 
+		var averageForce = average(_.pluck(touchLocations, 'force'));
+		this.$startForce.set(averageForce);
+
 		this._emit('satisfied');
 
 		if(this.isGreedy()) {
@@ -633,6 +652,13 @@ var TouchCluster = function (options) {
 	proto.getScaleConstraint = function() { return this.$scale; };
 	proto.getEndScale = function() { return this.$endScale.get(); };
 	proto.getEndScaleConstraint = function() { return this.$endScale; };
+
+	proto.getForce = function() { return this.$force.get(); };
+	proto.getForceConstraint = function() { return this.$force; };
+	proto.getStartForce = function() { return this.$startForce.get(); };
+	proto.getStartForceConstraint = function() { return this.$startForce; };
+	proto.getEndForce = function() { return this.$endForce.get(); };
+	proto.getEndForceConstraint = function() { return this.$endForce; };
 
 	proto.setOption = function(a, b) {
 		if(arguments.length === 1) {
