@@ -1,36 +1,70 @@
-registerBehavior("tap", "primitives", function(TouchCluster, Path, fire, begin, update, end) {
+registerBehavior("up then down", "primitives", function(TouchCluster, Path, fire, begin, update, end) {
 
-var touch = new TouchCluster({
+var gesture = new TouchCluster({
     numFingers: 1,
     greedy: true
 });
 
-var MIN_TIME_MILLISECONDS = 500;
-var radius = 40;
+
 var validTouch = true;
 var timeoutID;
+var MIN_TIME_MILLISECONDS = 1000;
+var radius = gesture.getRadiusConstraint();
+var crossedUpper = false;
+var crossedLower = false;
+var crossedLeft = false;
+var crossedRight = false;
 
+var right = new Path().moveTo(gesture.getStartXConstraint().add(50),
+                            gesture.getStartYConstraint().sub(150))
+                        .verticalLineTo(gesture.getStartYConstraint().add(100));
 
-var circle = new Path().circle(touch.getStartXConstraint(),
-                                touch.getStartYConstraint(),
-                                radius);
-                                
-touch.downInside = circle;
+var left = new Path().moveTo(gesture.getStartXConstraint().sub(50),
+                            gesture.getStartYConstraint().sub(150))
+                        .verticalLineTo(gesture.getStartYConstraint().add(100));
 
-touch.on('satisfied', function() {
-    validTouch = true; 
-    timeoutID = setTimeout(function() { 
-        validTouch = false;  
+var upper = new Path().moveTo(gesture.getStartXConstraint().sub(50),
+                            gesture.getStartYConstraint().sub(150))
+                        .horizontalLineTo(gesture.getStartXConstraint().add(50));
+
+var lower = new Path().moveTo(gesture.getStartXConstraint().sub(50),
+                            gesture.getStartYConstraint().sub(70))
+                        .horizontalLineTo(gesture.getStartXConstraint().add(50));
+
+//gesture.downInside = right;
+
+gesture.on('satisfied', function() {  
+   validTouch = true;   
+   crossedUpper = false;
+   crossedLower = false;
+   crossedLeft = false;
+   crossedRight = false;
+   timeoutID = setTimeout(function() {
+        validTouch = false;      
     }, MIN_TIME_MILLISECONDS);
 });
 
-touch.on('cross', circle, function() {  
-    validTouch = false;  
+
+
+gesture.on('cross', left, function() {  
+    crossedLeft = true;
 });
 
-touch.on('unsatisfied', function() {
-    if (validTouch) { 
-        fire();   
+gesture.on('cross', upper, function() {
+    crossedUpper = true;
+});
+
+gesture.on('cross', lower, function() {
+    crossedLower = true;
+});
+
+gesture.on('cross', right, function() {
+    crossedRight = true;
+})
+
+gesture.on('cross', right, function() {
+    if (!crossedLeft && crossedUpper && !crossedRight && validTouch) {
+        fire();
     }
 });
 

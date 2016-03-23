@@ -1,7 +1,7 @@
-registerBehavior("tap", "primitives", function(TouchCluster, Path, fire, begin, update, end) {
+registerBehavior("two finger right then up", "primitives", function(TouchCluster, Path, fire, begin, update, end) {
 
 var touch = new TouchCluster({
-    numFingers: 1,
+    numFingers: 2,
     greedy: true
 });
 
