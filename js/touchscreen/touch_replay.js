@@ -75,6 +75,8 @@ function replayTouches(touch_log, options) {
 							var touch = document.createTouch ? document.createTouch(root, target, newTouch.identifier, newTouch.pageX, newTouch.pageY,
 																  newTouch.screenX, newTouch.screenY, newTouch.clientY, newTouch.clientY)
 																  : newTouch;
+							touch.force = originalTouch.force;
+
 							touches[newTouch.identifier] = touch;
 							touch_targets[newTouch.identifier] = target;
 						} else {
@@ -85,7 +87,8 @@ function replayTouches(touch_log, options) {
 								screenX: screen.x,
 								screenY: screen.y,
 								clientX: client.x,
-								clientY: client.y
+								clientY: client.y,
+								force: originalTouch.force
 							});
 							touch_targets[newTouch.identifier] = target;
 						}

@@ -18,7 +18,7 @@ onTouchStart(function(event) {
 
 onTouchEnd(function(event) { 
     var touch = event.changedTouches[0];
-    if(validTouchtID && touch.identifier === touchID) {
+    if(validTouch && touch.identifier === touchID) {
         fire();
     }
 });
@@ -31,6 +31,7 @@ onTouchMove(function(event) {
     if(validTouch && distance(x, y, originalLocation.x, originalLocation.y) > MAX_MOVEMENT) {
         validTouch = false;
     }
+    console.log(touch.force);
     if(validTouch && touch.webkitForce !== 0) {
         fire();
     }
