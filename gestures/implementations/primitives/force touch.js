@@ -28,7 +28,7 @@ touch.on('cross', circle, function() {
 
 function recursiveCheck() {
     setTimeout(function() {
-        console.log(touch.getForceConstraint());
+        console.log(touch.getForce());
         if (touch.getForceConstraint() > 0.5 && validTouch) {
             fire();
             return;

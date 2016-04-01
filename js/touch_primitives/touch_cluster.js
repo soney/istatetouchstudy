@@ -135,6 +135,7 @@ function _onTouchStart(event) {
 			id: touch.identifier,
 			startX: touch.clientX,
 			startY: touch.clientY,
+			force: touch.force,
 			downAt: currTime,
 			movedAt: currTime,
 			pressed: true,
@@ -160,6 +161,7 @@ function _onTouchMove(event) {
 		var touchMap = touches.get(parseInt(touch.identifier));
 		touchMap.put('x', touch.clientX)
 				.put('y', touch.clientY)
+				.put('force', touch.force)
 				.put('movedAt', currTime);
 	});
 
@@ -196,6 +198,7 @@ function _onTouchEnd(event) {
 		touchMap.put('x', touch.clientX)
 				.put('y', touch.clientY)
 				.put('movedAt', currTime)
+				.put('force', touch.force)
 				.put('pressed', false);
 	});
 
