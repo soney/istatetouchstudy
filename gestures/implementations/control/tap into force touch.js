@@ -5,27 +5,36 @@ var MAX_TIME_MILLISECONDS = 200,
     timeoutID,
     count = 0,
     touchID1,
-    touchID2;
+    touchID2,
+    originalLocation1,
+    originalLocation2,
+    MAX_MOVEMENT = 300;
 
 onTouchStart(function(event) {
     validTouch = true;
     count++;
-    
+    if (count === 3) {
+        count = 1;
+    }
     if (count === 1) {
-        touchID1 = event.changedTouches[0];
+        touchID1 = event.changedTouches[0].identifier;
         timeoutID = setTimeout(function() {
             validTouch = false;
         }, MAX_TIME_MILLISECONDS);
+        originalLocation1 = {
+            x: event.changedTouches[0].clientX,
+            y: event.changedTouches[0].clientY
+        };
     }
     else if (count === 2) { 
-        touchID2 = event.changedTouches[0];
+        touchID2 = event.changedTouches[0].identifier;
         if (validTouch) {
             clearTimeout(timeoutID);
         }
-    }
-    else if (count === 3) {
-        count = 0;
-        validTouch = false;
+        originalLocation2 = {
+            x: event.changedTouches[0].clientX,
+            y: event.changedTouches[0].clientY
+        };
     }
 });
 
@@ -34,17 +43,18 @@ onTouchMove(function(event) {
         x = touch.clientX,
         y = touch.clientY;
     if(touch.identifier === touchID1) {
-        if(timeoutID && validTouch && distance(x, y, originalLocation.x, originalLocation.y) > MAX_MOVEMENT) {
+        if(timeoutID && validTouch && distance(x, y, originalLocation1.x, originalLocation1.y) > MAX_MOVEMENT) {
             validTouch = false;
             clearTimeout(timeoutID);
             timeoutID = false;
         }
     }
     else if(touch.identifier === touchID2) {
-        if(validTouch && distance(x, y, originalLocation.x, originalLocation.y) > MAX_MOVEMENT) {
+        console.log(touch.force);
+        if(validTouch && distance(x, y, originalLocation2.x, originalLocation2.y) > MAX_MOVEMENT) {
             validTouch = false;
         }
-        if (touch.force !== 0) {
+        else if (touch.force > 0.5) {
             fire();
         }
     }

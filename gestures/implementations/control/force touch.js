@@ -32,7 +32,7 @@ onTouchMove(function(event) {
         validTouch = false;
     }
     console.log(touch.force);
-    if(validTouch && touch.webkitForce !== 0) {
+    if(validTouch && touch.force > 0.5) {
         fire();
     }
 });
