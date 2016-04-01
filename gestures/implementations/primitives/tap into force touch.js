@@ -9,6 +9,7 @@ var gesture1 = new TouchCluster({
 var radius = 40;
 var validTouch;
 var count = 0;
+var timeoutID;
 
 var circle = new Path().circle(gesture1.getEndXConstraint(),
                                 gesture1.getEndYConstraint(),
@@ -22,6 +23,14 @@ gesture1.on('satisfied', function() {
    }
    if (count === 1) {
        validTouch = true;
+       timeoutID = setTimeout(function() {
+           console.log("timeout");
+           validTouch = false;
+       }, 600);
+   }
+   if (count === 2) {
+       clearTimeout(timeoutID);
+       recursiveCheck();
    }
 });
 
@@ -29,12 +38,19 @@ gesture1.on('cross', circle, function() {
     validTouch = false;
 });
 
-gesture1.on('unsatisfied', function() {
-    if (validTouch && count === 2 && gesture1.getForceConstraint() !== 0) {
-        fire();
-    }
-});
-//not done
+function recursiveCheck() {
+    setTimeout(function() {
+        //console.log("inside recursive check");
+        if (gesture1.getForce() > 0.5 && validTouch) {
+            fire();
+            return;
+        }
+        else {
+            recursiveCheck();
+            return;
+        }
+    }, 20);
+}
 
 
 });
