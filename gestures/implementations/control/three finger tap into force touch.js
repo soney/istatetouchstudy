@@ -1,6 +1,6 @@
 registerBehavior("three finger tap into force touch", "control", function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end) {
 
-var MAX_TIME_MILLISECONDS = 200,
+var MAX_TIME_MILLISECONDS = 300,
     validTouch = true,
     timeoutID,
     count = 0,
@@ -19,10 +19,13 @@ onTouchStart(function(event) {
     count++;
     if (count === 3) {
         count = 1;
+        originalLocations1 = new Array();
+        originalLocations2 = new Array();
+        ongoingTouches1 = new Array();
+        ongoingTouches2 = new Array();
     }
     if (count === 1) {
         first = true;
-        originalLocations1 = new Array();
         for (var i = 0; i < event.changedTouches.length; i++) {
             ongoingTouches1.push(event.changedTouches[i].identifier);
             var originalLocation1 = {
@@ -37,7 +40,6 @@ onTouchStart(function(event) {
     }
     else if (count === 2) { 
         first = false;
-        originalLocations2 = new Array();
         for (var j = 0; j < event.changedTouches.length; j++) {
             ongoingTouches1.push(event.changedTouches[j].identifier);
             var originalLocation2 = {
@@ -73,6 +75,7 @@ onTouchMove(function(event) {
             }
         }
         if (force && validTouch) {
+            validTouch = false;
             fire();
         }
     }

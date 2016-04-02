@@ -34,6 +34,7 @@ onTouchMove(function(event) {
     console.log(touch.force);
     if(validTouch && touch.force > 0.5) {
         fire();
+        validTouch = false;
     }
 });
 

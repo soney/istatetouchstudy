@@ -1,11 +1,9 @@
 registerBehavior("double tap count tap", "primitives", function(TouchCluster, Path, fire, begin, update, end) {
 
-var timeout1,
-    timeout2,
-    timeout3,
+var timeoutID,
     count = 0;
 
-var touch2 = new TouchCluster({
+var touch = new TouchCluster({
     numFingers: 1,
     greedy: true
 });
@@ -16,28 +14,29 @@ var touchEnded = false;
 var timeoutID;
 
 
-touch2.on('satisfied', function() {
+touch.on('satisfied', function() {
    validTouch = true;
    count++;
    if (count === 1) {
-        timeout1 = setTimeout(function() {
+        timeoutID = setTimeout(function() {
             validTouch = false;
         }, 200);
    }
    else if (count === 2) {
-        clearTimeout(timeout1);
-        valid
+        clearTimeout(timeoutID);
+        recursiveCheck();
    }
-   else if (count === 3) {
-       
+   if (count === 3) {
+       validTouch = false;
+       count = 0;
    }
 });
 
-function recursiveSetTimeout() {
+function recursiveCheck() {
     setTimeout(function() {
         if (validTouch) {
             fire();
-            recursiveSetTimeout();
+            recursiveCheck();
             return;
         }
         else {

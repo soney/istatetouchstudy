@@ -1,39 +1,39 @@
 registerBehavior("press and hold", "primitives", function(TouchCluster, Path, fire, begin, update, end) {
 
-var gesture = new TouchCluster({
+var touch = new TouchCluster({
     numFingers: 1,
     greedy: true
 });
 
 var MIN_TIME_MILLISECONDS = 1000;
 var radius = 40;
-var validGesture = true;
+var validTouch = true;
 
 var timeoutID;
 
-var circle = new Path().circle(gesture.getStartXConstraint(),
-                                gesture.getStartYConstraint(),
+var circle = new Path().circle(touch.getStartXConstraint(),
+                                touch.getStartYConstraint(),
                                 radius);
                                 
-gesture.downInside = circle;
+touch.downInside = circle;
 
-gesture.on('satisfied', function() {
-    validGesture = true;                
+touch.on('satisfied', function() {
+    validTouch = true;                
     timeoutID = setTimeout(function() { 
         timeoutID = false;
         fire();                   
     }, MIN_TIME_MILLISECONDS);
 });
 
-gesture.on('cross', circle, function() { 
-    validGesture = false; 
+touch.on('cross', circle, function() { 
+    validTouch = false; 
 });
 
-gesture.on('unsatisfied', function() {
-    if (validGesture === false || timeoutID) { 
+touch.on('unsatisfied', function() {
+    if (validTouch === false || timeoutID) { 
         clearTimeout(timeoutID);  
         timeoutID = false;
-        validGesture = false;
+        validTouch = false;
     }
 });
 

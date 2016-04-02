@@ -1,6 +1,6 @@
 registerBehavior("two finger down then left", "primitives", function(TouchCluster, Path, fire, begin, update, end) {
 
-var gesture = new TouchCluster({
+var touch = new TouchCluster({
     numFingers: 2,
     greedy: true
 });
@@ -11,44 +11,44 @@ var validTouch = true;
 var timeoutID;
 
 
-var right = new Path().moveTo(gesture.getStartXConstraint().add(40),
-                            gesture.getStartYConstraint().sub(30))
-                        .verticalLineTo(gesture.getStartYConstraint().add(250));
+var right = new Path().moveTo(touch.getStartXConstraint().add(40),
+                            touch.getStartYConstraint().sub(30))
+                        .verticalLineTo(touch.getStartYConstraint().add(250));
 
-var left = new Path().moveTo(gesture.getStartXConstraint().sub(40),
-                            gesture.getStartYConstraint().sub(30))
-                        .verticalLineTo(gesture.getStartYConstraint().add(100));
+var left = new Path().moveTo(touch.getStartXConstraint().sub(40),
+                            touch.getStartYConstraint().sub(30))
+                        .verticalLineTo(touch.getStartYConstraint().add(100));
 
-var upper = new Path().moveTo(gesture.getStartXConstraint().sub(40),
-                            gesture.getStartYConstraint().add(100))
-                        .horizontalLineTo(gesture.getStartXConstraint().sub(200));
+var upper = new Path().moveTo(touch.getStartXConstraint().sub(40),
+                            touch.getStartYConstraint().add(100))
+                        .horizontalLineTo(touch.getStartXConstraint().sub(200));
 
-var lower = new Path().moveTo(gesture.getStartXConstraint().add(40),
-                            gesture.getStartYConstraint().add(250))
-                        .horizontalLineTo(gesture.getStartXConstraint().sub(200));
+var lower = new Path().moveTo(touch.getStartXConstraint().add(40),
+                            touch.getStartYConstraint().add(250))
+                        .horizontalLineTo(touch.getStartXConstraint().sub(200));
 
 
-gesture.on('satisfied', function() {
+touch.on('satisfied', function() {
     validTouch = true; 
     timeoutID = setTimeout(function() { 
         validTouch = false;  
     }, MIN_TIME_MILLISECONDS);
 });
 
-gesture.on('cross', right, function() {  
+touch.on('cross', right, function() {  
     validTouch = false;  
 });
-gesture.on('cross', left, function() {  
+touch.on('cross', left, function() {  
     validTouch = false;  
 });
-gesture.on('cross', upper, function() {  
+touch.on('cross', upper, function() {  
     validTouch = false;  
 });
-gesture.on('cross', lower, function() {  
+touch.on('cross', lower, function() {  
     validTouch = false;  
 });
 
-gesture.on('unsatisfied', function() {
+touch.on('unsatisfied', function() {
     if (validTouch) { 
         fire();   
     }

@@ -1,6 +1,6 @@
 registerBehavior("two finger up then down", "primitives", function(TouchCluster, Path, fire, begin, update, end) {
 
-var gesture = new TouchCluster({
+var touch = new TouchCluster({
     numFingers: 2,
     greedy: true
 });
@@ -9,32 +9,31 @@ var gesture = new TouchCluster({
 var validTouch = true;
 var timeoutID;
 var MIN_TIME_MILLISECONDS = 750;
-var radius = gesture.getRadiusConstraint();
 var width = 200;
 var height = 80;
 var crossedUpper = false;
 var crossedRight = false;
 var crossedLeft = false;
 
-var lower = new Path().moveTo(gesture.getStartXConstraint().sub(100),
-                            gesture.getStartYConstraint().sub(40))
-                      .horizontalLineTo(gesture.getStartXConstraint().add(100));
+var lower = new Path().moveTo(touch.getStartXConstraint().sub(100),
+                            touch.getStartYConstraint().sub(40))
+                      .horizontalLineTo(touch.getStartXConstraint().add(100));
 
-var upper = new Path().moveTo(gesture.getStartXConstraint().sub(100),
-                            gesture.getStartYConstraint().sub(120))
-                      .horizontalLineTo(gesture.getStartXConstraint().add(100));
+var upper = new Path().moveTo(touch.getStartXConstraint().sub(100),
+                            touch.getStartYConstraint().sub(120))
+                      .horizontalLineTo(touch.getStartXConstraint().add(100));
 
-var right = new Path().moveTo(gesture.getStartXConstraint().add(100),
-                            gesture.getStartYConstraint().sub(120))
-                        .verticalLineTo(gesture.getStartYConstraint().add(40));
+var right = new Path().moveTo(touch.getStartXConstraint().add(100),
+                            touch.getStartYConstraint().sub(120))
+                        .verticalLineTo(touch.getStartYConstraint().add(40));
 
-var left = new Path().moveTo(gesture.getStartXConstraint().sub(100),
-                            gesture.getStartYConstraint().sub(120))
-                        .verticalLineTo(gesture.getStartYConstraint().add(40));
+var left = new Path().moveTo(touch.getStartXConstraint().sub(100),
+                            touch.getStartYConstraint().sub(120))
+                        .verticalLineTo(touch.getStartYConstraint().add(40));
 
-gesture.downInside = lower;
+touch.downInside = lower;
 
-gesture.on('satisfied', function() {
+touch.on('satisfied', function() {
    validTouch = true;      
    crossedUpper = false;
    crossedRight = false;
@@ -45,31 +44,23 @@ gesture.on('satisfied', function() {
 });
 
 
-
-gesture.on('cross', upper, function() {
+touch.on('cross', upper, function() {
     crossedUpper = true;
-    console.log('crossed upper');
 });
 
-gesture.on('cross', right, function() {
+touch.on('cross', right, function() {
     crossedRight = true;
-    console.log('crossed right');
 });
 
-gesture.on('cross', left, function() {
+touch.on('cross', left, function() {
     crossedLeft = true;
-    console.log('crossed left');
 });
 
-gesture.on('cross', lower, function() {
-    console.log('crossed lower');
+touch.on('cross', lower, function() {
     if (crossedUpper && !crossedRight && !crossedLeft && validTouch) {
         fire();
     }
 });
-
-
-
 
 
 });

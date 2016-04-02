@@ -6,9 +6,7 @@ var touch = new TouchCluster({
 });
 
 var MIN_TIME_MILLISECONDS = 500;
-var radius = touch.getStartRadiusConstraint();
-//how to get start without letting it change
-//does it matter if they move?
+var radius;
 var validTouch = true;
 var timeoutID;
 
@@ -21,6 +19,7 @@ touch.downInside = circle;
 
 touch.on('satisfied', function() {
     validTouch = true; 
+    radius = touch.getRadius();
     recursiveSetTimeout();
 });
 
@@ -34,7 +33,8 @@ touch.on('unsatisfied', function() {
 
 function recursiveSetTimeout() {
     setTimeout(function() {
-        if (validTouch && radius === touch.getRadiusConstraint()) { //why won't this fire??
+        console.log(radius + ", " + touch.getRadius());
+        if (validTouch && (radius < touch.getRadius() + 20) && (radius > touch.getRadius() - 20)) {
             fire();
             recursiveSetTimeout();
             return;

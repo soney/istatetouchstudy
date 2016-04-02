@@ -4,9 +4,9 @@ var MIN_TIME_MILLISECONDS = 1000,
     MAX_MOVEMENT = 100,
     touchID,
     validTouch = true,
-    movingRight = false;
-var originalLocation;
-var lastLocation;
+    movingRight = false,
+    originalLocation,
+    lastLocation;
 
 onTouchStart(function(event) {
     var touch = event.changedTouches[0];

@@ -8,7 +8,6 @@ var touch = new TouchCluster({
 var MIN_TIME_MILLISECONDS = 500;
 var radius = 40;
 var validTouch = true;
-var timeoutID;
 
 
 var circle = new Path().circle(touch.getStartXConstraint(),
@@ -19,21 +18,21 @@ touch.downInside = circle;
 
 touch.on('satisfied', function() {
     validTouch = true; 
-    recursiveCheck();
+    recursiveSetTimeout();
 });
 
 touch.on('cross', circle, function() {  
     validTouch = false;  
 });
 
-function recursiveCheck() {
+function recursiveSetTimeout() {
     setTimeout(function() {
         if (touch.getForce() > 0.5 && validTouch) {
             fire();
             return;
         }
         else {
-            recursiveCheck();
+            recursiveSetTimeout();
             return;
         }
     }, 20);

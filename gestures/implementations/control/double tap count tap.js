@@ -3,7 +3,8 @@ registerBehavior("double tap count tap", "control", function(onTouchStart, onTou
 var MAX_TIME_MILLISECONDS = 200,
     validTouch = true,
     timeoutID,
-    count = 0;
+    count = 0,
+    doubleTap;
 
 onTouchStart(function(event) {
     validTouch = true;
@@ -15,7 +16,6 @@ onTouchStart(function(event) {
             recursiveSetTimeout();
         }
     }
-    
     if (count === 1) {
         timeoutID = setTimeout(function() {
             validTouch = false;

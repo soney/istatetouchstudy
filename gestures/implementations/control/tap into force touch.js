@@ -54,8 +54,9 @@ onTouchMove(function(event) {
         if(validTouch && distance(x, y, originalLocation2.x, originalLocation2.y) > MAX_MOVEMENT) {
             validTouch = false;
         }
-        else if (touch.force > 0.5) {
+        else if (touch.force > 0.5 && validTouch) {
             fire();
+            validTouch = false;
         }
     }
 });
@@ -63,6 +64,5 @@ onTouchMove(function(event) {
 function distance(x1, y1, x2, y2) {
     return Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2));
 }
-//not done
 
 });

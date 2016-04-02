@@ -1,6 +1,6 @@
 registerBehavior("three finger tap into force touch", "primitives", function(TouchCluster, Path, fire, begin, update, end) {
 
-var gesture1 = new TouchCluster({
+var touch = new TouchCluster({
     numFingers: 3,
     greedy: true
 });
@@ -11,12 +11,12 @@ var validTouch;
 var count = 0;
 var timeoutID;
 
-var circle = new Path().circle(gesture1.getEndXConstraint(),
-                                gesture1.getEndYConstraint(),
+var circle = new Path().circle(touch.getEndXConstraint(),
+                                touch.getEndYConstraint(),
                                 radius);
 
 
-gesture1.on('satisfied', function() {  
+touch.on('satisfied', function() {  
    count++;
    if (count === 3) {
        count = 1;
@@ -30,22 +30,22 @@ gesture1.on('satisfied', function() {
    }
    if (count === 2) {
        clearTimeout(timeoutID);
-       recursiveCheck();
+       recursiveSetTimeout();
    }
 });
 
-gesture1.on('cross', circle, function() {
+touch.on('cross', circle, function() {
     validTouch = false;
 });
 
-function recursiveCheck() {
+function recursiveSetTimeout() {
     setTimeout(function() {
-        if (gesture1.getForce() > 0.5 && validTouch) {
+        if (touch.getForce() > 0.5 && validTouch) {
             fire();
             return;
         }
         else {
-            recursiveCheck();
+            recursiveSetTimeout();
             return;
         }
     }, 20);

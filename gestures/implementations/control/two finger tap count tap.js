@@ -8,9 +8,7 @@ var MAX_TIME_MILLISECONDS = 200,
 
 onTouchStart(function(event) {
     validTouch = true;
-    if (event.changedTouches.length === 2) { //how much leeway is there for
-            //double taps? should I account for taking a little bit of time
-            //between the first and second tap?
+    if (event.changedTouches.length === 2) {
         doubleTap = true;
         timeoutID = setTimeout(function() {
            validTouch = false;

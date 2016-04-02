@@ -1,7 +1,7 @@
 registerBehavior("three finger left then right", "control", function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end) {
 
-var MIN_TIME_MILLISECONDS = 1000,
-    MAX_MOVEMENT = 100,
+var MIN_TIME_MILLISECONDS = 2000,
+    MAX_MOVEMENT = 200,
     originalLocation,
     touchID,
     validTouch = true,

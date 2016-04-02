@@ -27,6 +27,9 @@ onTouchStart(function(event) {
 
 onTouchMove(function(event) {
     var force = true;
+    if (event.changedTouches.length !== 2) {
+        return;
+    }
     for (var i = 0; i < event.changedTouches.length; i++) {
         var touch = event.changedTouches[i],
             x = touch.clientX,
@@ -41,9 +44,9 @@ onTouchMove(function(event) {
             force = false;
         }
     }
-    console.log(touch.force);
     if(validTouch && force) {
         fire();
+        validTouch = false;
     }
 });
 
