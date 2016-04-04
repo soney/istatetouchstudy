@@ -5,8 +5,8 @@ var MIN_TIME_MILLISECONDS = 1000,
     originalLocation,
     touchID,
     validTouch = true,
-    movingDown = false,
-    movingLeft = false;
+    bool1 = false,
+    bool2 = false;
 var ongoingTouches = new Array();
 var originalLocations = new Array();
 var lastLocations = new Array();
@@ -26,7 +26,7 @@ onTouchStart(function(event) {
         lastLocations.push(originalLocation);
     }
     validTouch = true;
-    movingDown = true;
+    bool1 = true;
 });
 
 onTouchEnd(function(event) {
@@ -46,14 +46,11 @@ onTouchMove(function(event) {
         var x = ongoingTouches[j].clientX;
         var y = ongoingTouches[j].clientY;
         
-        if (movingDown) {
-            //check to make sure not much difference is happening left or right
-            //also check to make sure they've moved down a considerable distance (~100)
+        if (bool1) {
             if (distance(x, originalLocations[j].x) > MAX_MOVEMENT) {
                 if (x < originalLocations[j].x) {
-                    movingLeft = true;
-                    movingDown = false;
-                    //reset y so we can measure the distance variation when moving left
+                    bool1 = false;
+                    bool2 = true;
                     originalLocation[j].y = y;
                 }
                 else { 
@@ -65,7 +62,7 @@ onTouchMove(function(event) {
             }
         }
         
-        else if (movingLeft) {
+        else if (bool2) {
             if (distance(y, originalLocations[j].y) > MAX_MOVEMENT) {
                 validTouch = false;
             }

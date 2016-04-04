@@ -3,9 +3,9 @@ registerBehavior("swipe to left", "control", function(onTouchStart, onTouchMove,
 var MAX_MOVEMENT = 50,
     MIN_MOVEMENT = 200,
     originalLocation,
+    lastLocation,
     touchID,
-    validTouch,
-    endingX;
+    validTouch;
 
 onTouchStart(function(event) {
     var touch = event.changedTouches[0];
@@ -13,14 +13,17 @@ onTouchStart(function(event) {
         x: touch.clientX,
         y: touch.clientY
     };
-
+    lastLocation = {
+        x: touch.clientX,
+        y: touch.clientY
+    };
     touchID = touch.identifier;
     validTouch = true;
 });
 
 onTouchEnd(function(event) {
     var touch = event.changedTouches[0];
-    if(validTouch && touch.identifier === touchID && distance(originalLocation.x, endingX) >= MIN_MOVEMENT) {
+    if (validTouch && touch.identifier === touchID && distance(originalLocation.x, lastLocation.x) >= MIN_MOVEMENT) {
         fire();
     }
 });
@@ -29,10 +32,14 @@ onTouchMove(function(event) {
     var touch = event.changedTouches[0],
         x = touch.clientX,
         y = touch.clientY;
-    endingX = x;
-	if(distance(y, originalLocation.y) > MAX_MOVEMENT) {
+    if (x > lastLocation.x + 10) {
         validTouch = false;
     }
+	if (distance(y, originalLocation.y) > MAX_MOVEMENT) {
+        validTouch = false;
+    }
+    lastLocation.x = x;
+    lastLocation.y = y;
 });
 
 function distance(y1, y2) {

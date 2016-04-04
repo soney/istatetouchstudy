@@ -4,7 +4,7 @@ var MIN_TIME_MILLISECONDS = 1000,
     MAX_MOVEMENT = 100,
     touchID,
     validTouch = true,
-    movingRight = false,
+    bool = false,
     originalLocation,
     lastLocation;
 
@@ -17,13 +17,13 @@ onTouchStart(function(event) {
     };
     lastLocation = originalLocation;
     validTouch = true;
-    movingRight = false;
+    bool = false;
 });
 
 onTouchEnd(function(event) {
     var touch = event.changedTouches[0];
     if(validTouch && event.targetTouches.length === 1) {
-        if (movingRight) {
+        if (bool) {
             fire();
         }
     }
@@ -36,12 +36,12 @@ onTouchMove(function(event) {
         if (validTouch && distance(y, originalLocation.y) > MAX_MOVEMENT) {
             validTouch = false;
         }
-        if (movingRight === false) {
+        if (bool === false) {
             if (lastLocation.x < x) {
-                movingRight = true;
+                bool = true;
             }
         }
-        else if (movingRight === true) {
+        else if (bool === true) {
             if (lastLocation.x > (x + 20)) {
                 validTouch = false;
             }

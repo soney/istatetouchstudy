@@ -3,9 +3,9 @@ registerBehavior("swipe up", "control", function(onTouchStart, onTouchMove, onTo
 var MAX_MOVEMENT = 50,
     MIN_MOVEMENT = 200,
     originalLocation,
+    lastLocation,
     touchID,
-    validTouch,
-    endingY;
+    validTouch;
 
 onTouchStart(function(event) {
     var touch = event.changedTouches[0];
@@ -13,14 +13,17 @@ onTouchStart(function(event) {
         x: touch.clientX,
         y: touch.clientY
     };
-
+    lastLocation = {
+        x: touch.clientX,
+        y: touch.clientY
+    };
     touchID = touch.identifier;
     validTouch = true;
 });
 
 onTouchEnd(function(event) {
     var touch = event.changedTouches[0];
-    if(validTouch && touch.identifier === touchID && distance(originalLocation.y, endingY) >= MIN_MOVEMENT) {
+    if (validTouch && touch.identifier === touchID && distance(originalLocation.y, lastLocation.y) >= MIN_MOVEMENT) {
         fire();
     }
 });
@@ -29,10 +32,14 @@ onTouchMove(function(event) {
     var touch = event.changedTouches[0],
         x = touch.clientX,
         y = touch.clientY;
-    endingY = y;
-	if(distance(x, originalLocation.x) > MAX_MOVEMENT) {
+    if (y > lastLocation.y + 10) {
         validTouch = false;
     }
+	if (distance(x, originalLocation.x) > MAX_MOVEMENT) {
+        validTouch = false;
+    }
+    lastLocation.x = x;
+    lastLocation.y = y;
 });
 
 function distance(y1, y2) {

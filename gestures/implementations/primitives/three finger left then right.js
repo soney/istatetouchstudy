@@ -10,9 +10,10 @@ var validTouch = true;
 var timeoutID;
 var MIN_TIME_MILLISECONDS = 1000;
 var radius = touch.getRadiusConstraint();
-var crossedUpper = false;
-var crossedLower = false;
-var crossedLeft = false;
+var bool1 = false;
+var bool2 = false;
+var bool3 = false;
+var bool4 = false;
 
 var right = new Path().moveTo(touch.getStartXConstraint().sub(50),
                             touch.getStartYConstraint().sub(100))
@@ -32,9 +33,10 @@ var lower = new Path().moveTo(touch.getStartXConstraint().sub(180),
 
 touch.on('satisfied', function() {  
    validTouch = true;   
-   crossedUpper = false;
-   crossedLower = false;
-   crossedLeft = false;
+   bool1 = false;
+   bool2 = false;
+   bool3 = false;
+   bool4 = false;
    timeoutID = setTimeout(function() {
         validTouch = false;      
     }, MIN_TIME_MILLISECONDS);
@@ -42,19 +44,25 @@ touch.on('satisfied', function() {
 
 
 touch.on('cross', left, function() {  
-    crossedLeft = true;
+    bool1 = true;
 });
 
 touch.on('cross', upper, function() {
-    crossedUpper = true;
+    bool2 = true;
 });
 
 touch.on('cross', lower, function() {
-    crossedLower = true;
+    bool3 = true;
 });
 
 touch.on('cross', right, function() {
-    if (crossedLeft && !crossedUpper && !crossedLower && validTouch) {
+    if (bool1) {
+        bool4 = true;
+    } 
+});
+
+touch.on('cross', right, function() {
+    if (bool1 && !bool2 && !bool3 && bool4 && validTouch) {
         fire();
     }
 });

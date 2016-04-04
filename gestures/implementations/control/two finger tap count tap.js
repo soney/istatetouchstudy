@@ -2,34 +2,34 @@ registerBehavior("two finger tap count tap", "control", function(onTouchStart, o
 
 var MAX_TIME_MILLISECONDS = 200,
     validTouch = true,
-    doubleTap = false,
-    singleTap = false,
+    bool1 = false,
+    bool2 = false,
     timeoutID;
 
 onTouchStart(function(event) {
     validTouch = true;
     if (event.changedTouches.length === 2) {
-        doubleTap = true;
+        bool1 = true;
         timeoutID = setTimeout(function() {
            validTouch = false;
         }, MAX_TIME_MILLISECONDS);
     }
     
     if (event.changedTouches.length === 1) {
-        singleTap = true;
+        bool2 = true;
         validTouch = false;
     }
 });
 
 onTouchEnd(function(event) {
-    if (doubleTap) {
+    if (bool1) {
         clearTimeout(timeoutID);
         recursiveSetTimeout();
     }
-    if (singleTap) {
+    if (bool2) {
         validTouch = false;
-        doubleTap = false;
-        singleTap = false;
+        bool1 = false;
+        bool2 = false;
     }
 });
 

@@ -26,8 +26,8 @@ var lower = new Path().moveTo(touch.getStartXConstraint().sub(40),
                             .horizontalLineTo(touch.getStartXConstraint().add(40));
 
 touch.on('satisfied', function() { 
-   validTouch = true;           
-   timeoutID = setTimeout(function() { 
+    validTouch = true;           
+    timeoutID = setTimeout(function() { 
         validTouch = false;         
     }, MIN_TIME_MILLISECONDS);
 });
