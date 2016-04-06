@@ -20,7 +20,6 @@ touch.downInside = circle;
 
 touch.on('satisfied', function() {
     validTouch = true; 
-    begin();
     recursiveSetTimeout();
 });
 
@@ -30,13 +29,12 @@ touch.on('cross', circle, function() {
 
 touch.on('unsatisfied', function() {
     validTouch = false;
-    end();
 });
 
 function recursiveSetTimeout() {
     setTimeout(function() {
         if (validTouch) {
-            update();
+            fire();
             recursiveSetTimeout();
             return;
         }
