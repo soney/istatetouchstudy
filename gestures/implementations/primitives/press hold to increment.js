@@ -17,8 +17,10 @@ var circle = new Path().circle(touch.getStartXConstraint(),
                                 
 touch.downInside = circle;
 
+
 touch.on('satisfied', function() {
     validTouch = true; 
+    begin();
     recursiveSetTimeout();
 });
 
@@ -28,12 +30,13 @@ touch.on('cross', circle, function() {
 
 touch.on('unsatisfied', function() {
     validTouch = false;
+    end();
 });
 
 function recursiveSetTimeout() {
     setTimeout(function() {
         if (validTouch) {
-            fire();
+            update();
             recursiveSetTimeout();
             return;
         }
