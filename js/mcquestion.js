@@ -1,7 +1,8 @@
 $.widget('iss.mcquestion', {
 	options: {
 		question: false,
-		responseOptions: false
+		responseOptions: false,
+		availabilityDelay: 2*1000,
 	},
 
 	_create: function() {
@@ -35,15 +36,20 @@ $.widget('iss.mcquestion', {
 			.on('click', $.proxy(this._onSubmit, this))
 			.append($('<span />').addClass('glyphicon glyphicon-chevron-right'));
 
-		_.each(this.option('responseOptions'), function(option, index) {
-			var optionDisplay = $('<div />').addClass('col-md-3 option')
-											.appendTo(this.optionsContainer)
-											.append($('<span />').text(index+1)
-																.addClass('number'))
-											.append(option);
-		}, this);
+		var availabilityDelay = this.option('availabilityDelay') || 0;
+		this.optionsContainer.text('read the implementation for at least ' + Math.round(availabilityDelay/1000) + ' seconds before anwering');
+		setTimeout(_.bind(function() {
+			this.optionsContainer.text('');
+			_.each(this.option('responseOptions'), function(option, index) {
+				var optionDisplay = $('<div />').addClass('col-md-3 option')
+												.appendTo(this.optionsContainer)
+												.append($('<span />').text(index+1)
+																	.addClass('number'))
+												.append(option);
+			}, this);
+			$('.option', this.optionsContainer).on('click.optionSelected', $.proxy(this._optionSelected, this));
+		}, this), availabilityDelay);
 
-		$('.option', this.optionsContainer).on('click.optionSelected', $.proxy(this._optionSelected, this));
 		this.lastFocus = this.startTime = (new Date()).getTime();
 		this.timeInFocus = 0;
 
