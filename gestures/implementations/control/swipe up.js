@@ -1,30 +1,31 @@
 registerBehavior("swipe up", "control", function(onTouchStart, onTouchMove, onTouchEnd, onTouchCancel, offTouchStart, offTouchMove, offTouchEnd, offTouchCancel, fire, begin, update, end) {
 
-var MAX_MOVEMENT = 50,
-    MIN_MOVEMENT = 200,
+var MIN_TIME_MILLISECONDS = 1000, 
+    MAX_MOVEMENT = 50,
     originalLocation,
-    lastLocation,
     touchID,
-    validTouch;
-
+    timeoutID;
+// 1,000 millisecond min time seems kind of high for a swipe doesn't it?
+// Why is this different from swipe left?
 onTouchStart(function(event) {
     var touch = event.changedTouches[0];
     originalLocation = {
         x: touch.clientX,
-        y: touch.clientY
+        y: touch.clientY 
     };
-    lastLocation = {
-        x: touch.clientX,
-        y: touch.clientY
-    };
+    
     touchID = touch.identifier;
-    validTouch = true;
+    timeoutID = setTimeout(function() {
+        timeoutID = false;
+        fire();       
+    }, MIN_TIME_MILLISECONDS);
 });
 
-onTouchEnd(function(event) {
+onTouchEnd(function(event) { 
     var touch = event.changedTouches[0];
-    if (validTouch && touch.identifier === touchID && distance(originalLocation.y, lastLocation.y) >= MIN_MOVEMENT) {
-        fire();
+    if(timeoutID && touch.identifier === touchID) {
+        clearTimeout(timeoutID);
+        timeoutID = false;
     }
 });
 
@@ -32,18 +33,15 @@ onTouchMove(function(event) {
     var touch = event.changedTouches[0],
         x = touch.clientX,
         y = touch.clientY;
-    if (y > lastLocation.y + 10) {
-        validTouch = false;
+
+    if(timeoutID && distance(x, y, originalLocation.x, originalLocation.y) > MAX_MOVEMENT) {
+        clearTimeout(timeoutID); 
+        timeoutID = false;
     }
-	if (distance(x, originalLocation.x) > MAX_MOVEMENT) {
-        validTouch = false;
-    }
-    lastLocation.x = x;
-    lastLocation.y = y;
 });
 
-function distance(y1, y2) {
-    return Math.sqrt(Math.pow(y1-y2, 2));
+function distance(x1, y1, x2, y2) {
+    return Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2));
 }
 
 });
