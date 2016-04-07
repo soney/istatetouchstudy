@@ -2,7 +2,7 @@ $.widget('iss.mcquestion', {
 	options: {
 		question: false,
 		responseOptions: false,
-		availabilityDelay: 2*1000,
+		availabilityDelay: 30*1000,
 	},
 
 	_create: function() {
