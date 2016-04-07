@@ -58,6 +58,7 @@ function getQuestion(behaviors, implementation, behaviorName, numResponseOptions
 			return Promise.join(codePromise, function(codeStr) {
 				codeStr = codeStr.substring(codeStr.indexOf('\n')+1, codeStr.lastIndexOf('\n')-1);
 				codeStr = codeStr.replace(/^\t/gm, '');
+				/*
 
 				var ast = esprima.parse(codeStr);
 				var result = esmangle.mangle(ast);  // gets mangled result
@@ -72,6 +73,7 @@ function getQuestion(behaviors, implementation, behaviorName, numResponseOptions
 					comment: false
 				});  // dump AST
 
+											*/
 				var preElem = $('<pre />');
 				var codeElem = $('<code />').appendTo(preElem)
 											.text(codeStr);
