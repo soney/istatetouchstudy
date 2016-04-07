@@ -5,8 +5,6 @@ var MIN_TIME_MILLISECONDS = 1000,
     originalLocation,
     touchID,
     timeoutID;
-// 1,000 millisecond min time seems kind of high for a swipe doesn't it?
-// Why is this different from swipe left?
 onTouchStart(function(event) {
     var touch = event.changedTouches[0];
     originalLocation = {

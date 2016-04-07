@@ -6,7 +6,6 @@ var MAX_TIME_MILLISECONDS = 200,
     count = 0,
     doubleTap;
 
-// I'm unclear as to what the expected behavior is on this. It seems like it could make sense, though
 onTouchStart(function(event) {
     validTouch = true;
     count++;

@@ -74,7 +74,8 @@ function getQuestion(behaviors, implementation, behaviorName, numResponseOptions
 
 				var preElem = $('<pre />');
 				var codeElem = $('<code />').appendTo(preElem)
-											.text(generatedCodeStr);
+											.text(codeStr);
+											//.text(generatedCodeStr);
 				hljs.highlightBlock(codeElem[0]);
 				return preElem;
 			});
@@ -108,7 +109,7 @@ function getOption(behaviorName, isCorrect) {
 $.widget('iss.mcquiz', {
 	options: {
 		numResponseOptions: 4,
-		numQuestions: 2,
+		numQuestions: 10,
 		currentQuestion: 1,
 		implementation: 'primitives',
 		uid: guid()

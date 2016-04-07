@@ -25,7 +25,6 @@ onTouchStart(function(event) {
 onTouchEnd(function(event) {
     if(validTouch && event.targetTouches.length === 3) {
         for (var i = 0; i < event.targetTouches.length; i++) {
-            // Fire if X is less than or if Y is less than? I'm not sure I get this one
             if (event.changedTouches[0].clientX < event.targetTouches[i].clientX) {
                 fire();
             }

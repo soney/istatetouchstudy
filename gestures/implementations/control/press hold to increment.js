@@ -30,7 +30,7 @@ onTouchMove(function(event) {
     if(validTouch && distance(x, y, originalLocation.x, originalLocation.y) > MAX_MOVEMENT) {
         validTouch = false;
     }
-    if(touch.identifier != touchID) { //is it necessary to check the touch?
+    if(touch.identifier != touchID) {
         validTouch = false;
     }
 });
