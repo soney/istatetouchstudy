@@ -40,7 +40,6 @@ touch.on('cross', circle, function() {
 
 function recursiveSetTimeout() {
     setTimeout(function() {
-        //console.log("inside recursive check");
         if (touch.getForce() > 0.5 && validTouch) {
             fire();
             return;

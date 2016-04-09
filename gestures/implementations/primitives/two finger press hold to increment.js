@@ -33,7 +33,6 @@ touch.on('unsatisfied', function() {
 
 function recursiveSetTimeout() {
     setTimeout(function() {
-        console.log(radius + ", " + touch.getRadius());
         if (validTouch && (radius < touch.getRadius() + 20) && (radius > touch.getRadius() - 20)) {
             fire();
             recursiveSetTimeout();
