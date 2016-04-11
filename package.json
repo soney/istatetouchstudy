@@ -1,11 +1,13 @@
 {
-	"name": "istatetouchstudy",
-	"dependencies": {
-		"express": "~4.13",
-		"node-sass-middleware": "~0.9",
-		"body-parser": "~1.14"
-	},
-	"engines": {
-		"node": "~5.3"
-	}
+  "name": "istatetouchstudy",
+  "dependencies": {
+    "body-parser": "~1.14",
+    "express": "~4.13",
+    "firebase": "^2.4.2",
+    "node-sass-middleware": "~0.9",
+    "underscore": "^1.8.3"
+  },
+  "engines": {
+    "node": "~5.3"
+  }
 }
