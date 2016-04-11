@@ -160,6 +160,8 @@ dataRef.child('study_results').on('value', function(snapshot) {
 			pct[name][implementation] = corr[implementation]/count[implementation];
 		});
 	});
+	console.log(Math.max.apply(Math, _.values(numParticipants)) + ' participants');
+	console.log('----------');
 	_.each(pct, function(r, name) {
 		console.log(name + ': ' + Math.round((r.primitives-r.control)*100)/100);
 	});
@@ -167,6 +169,10 @@ dataRef.child('study_results').on('value', function(snapshot) {
 	_.each(percentageCorrect, function(result, condition) {
 		var avgTime = result.time/numParticipants[condition];
 		avgTime = Math.round(avgTime/1000);
-		console.log(condition + ': ' + result.pct + ' ('+result.stdev+') ' + avgTime/60 + ' (' +  Math.round(result.timeStdev/(60*1000)) + ')');
+		console.log(condition + ': ' + result.pct + ' ('+Math.round(result.stdev*1000)/1000+') ' +
+										avgTime/60 + ' (' +
+											Math.round(result.timeStdev/(60*1000)) + ')');
 	});
+	Firebase.goOffline();
+	process.exit();
 });
