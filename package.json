@@ -2,6 +2,7 @@
   "name": "istatetouchstudy",
   "dependencies": {
     "body-parser": "~1.14",
+    "csv": "^1.1.0",
     "express": "~4.13",
     "firebase": "^2.4.2",
     "node-sass-middleware": "~0.9",
