@@ -115,16 +115,50 @@ function getTables() {
 			cols.splice(i+1, 0, notCol);
 		}
 
-		var headerRow = []
-		var categoryRows = [];
 
-		_.each(cols, function(attrName) {
-			headerRow.push(attrName);
-		});
+		var participant_rows = {};
 
 		_.each(result.categories, function(category_results, category_name) {
-			categoryRows.push([category_name])
-			console.log(category_results);
+			// categoryRows.push([category_name])
+			_.each(category_results.primitives, function(primitives_result, participant_id) {
+				var control_result = category_results.control[participant_id];
+
+				if(!_.has(participant_rows, participant_id)) {
+					participant_rows[participant_id] = {}
+				}
+				participant_rows[participant_id][category_name] = {
+					primitives: primitives_result,
+					control: control_result
+				}
+			});
+		});
+
+
+		var headerRow = ['id'];
+		_.each(cols, function(attrName) {
+			_.each(['control', 'primitives'], function(implementation_type) {
+				_.each(['correct_pct', 'count', 'focus_time_per_q'], function(measure) {
+					headerRow.push(attrName+'_'+implementation_type+'_'+measure);
+				});
+			});
+		});
+		var categoryRows = [headerRow];
+
+		_.each(participant_rows, function(participant_results, participant_id) {
+			var row = [participant_id]
+			_.each(cols, function(attrName) {
+				_.each(['control', 'primitives'], function(implementation_type) {
+					var measures = participant_results[attrName][implementation_type];
+					row.push(measures.correct/measures.count, measures.count, measures.focusTime/measures.count);
+				});
+			});
+			categoryRows.push(row);
+		});
+
+		stringify(categoryRows, function(err, output){
+			console.log(output);
+			console.log('');
+			process.exit();
 		});
 		//
 		// var implementations = ['control', 'primitives']
@@ -485,6 +519,10 @@ function samplestdev() {
 
 function average() {
 	return sum.apply(this, arguments)/arguments.length;
+}
+
+function rotate(arr) {
+	return _.zip.apply(_, arr);
 }
 
 // getResultsCSV();
